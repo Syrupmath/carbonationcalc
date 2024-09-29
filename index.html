@@ -41,9 +41,6 @@
             background-color: #f4f4f4;
             border: 1px solid #ccc;
         }
-        .dispensing-options {
-            display: none; /* Hidden by default */
-        }
     </style>
 </head>
 <body>
@@ -69,33 +66,25 @@
             <option value="C">Celsius (°C)</option>
         </select>
 
-        <label>
-            <input type="checkbox" id="includeDispensing" />
-            Include Dispensing Pressure Calculation
-        </label>
+        <label for="rise">Rise (ft):</label>
+        <input type="number" id="rise" required>
 
-        <!-- Dispensing Pressure Options (shown when checkbox is selected) -->
-        <div id="dispensingOptions" class="dispensing-options">
-            <label for="rise">Rise (ft):</label>
-            <input type="number" id="rise">
+        <label for="run">Run (ft):</label>
+        <input type="number" id="run" required>
 
-            <label for="run">Run (ft):</label>
-            <input type="number" id="run">
+        <label for="draftLineType">Draft Line Type:</label>
+        <select id="draftLineType" required>
+            <option value="vinyl">Vinyl</option>
+            <option value="stainless_steel">Stainless Steel</option>
+            <option value="polyethylene">Polyethylene</option>
+        </select>
 
-            <label for="draftLineType">Draft Line Type:</label>
-            <select id="draftLineType">
-                <option value="vinyl">Vinyl</option>
-                <option value="stainless_steel">Stainless Steel</option>
-                <option value="polyethylene">Polyethylene</option>
-            </select>
-
-            <label for="draftLineSize">Draft Line Size:</label>
-            <select id="draftLineSize">
-                <option value="3/16">3/16 inch</option>
-                <option value="1/4">1/4 inch</option>
-                <option value="5/16">5/16 inch</option>
-            </select>
-        </div>
+        <label for="draftLineSize">Draft Line Size:</label>
+        <select id="draftLineSize" required>
+            <option value="3/16">3/16 inch</option>
+            <option value="1/4">1/4 inch</option>
+            <option value="5/16">5/16 inch</option>
+        </select>
 
         <button type="submit">Calculate</button>
     </form>
@@ -130,16 +119,6 @@
         }
     };
 
-    // Toggle dispensing pressure options based on checkbox
-    document.getElementById('includeDispensing').addEventListener('change', function() {
-        const dispensingOptions = document.getElementById('dispensingOptions');
-        if (this.checked) {
-            dispensingOptions.style.display = 'block';
-        } else {
-            dispensingOptions.style.display = 'none';
-        }
-    });
-
     // Convert Celsius to Fahrenheit
     function celsiusToFahrenheit(celsius) {
         return (celsius * 9.0 / 5.0) + 32;
@@ -152,52 +131,47 @@
         const style = document.getElementById('style').value;
         let temperature = parseFloat(document.getElementById('temperature').value);
         const tempUnit = document.getElementById('tempUnit').value;
-        const includeDispensing = document.getElementById('includeDispensing').checked;
+        const rise = parseFloat(document.getElementById('rise').value);
+        const run = parseFloat(document.getElementById('run').value);
+        const draftLineType = document.getElementById('draftLineType').value;
+        const draftLineSize = document.getElementById('draftLineSize').value;
 
         // Convert temperature to Fahrenheit if input is in Celsius
         if (tempUnit === "C") {
             temperature = celsiusToFahrenheit(temperature);
         }
 
-        // Simplified carbonation calculation logic for beverages
+        // Carbonation calculation logic
         function calculateCarbonationPressure(temperature, co2Volumes) {
-            const atmosphericPressure = 14.7; // Sea level atmospheric pressure in PSI
-            return (co2Volumes * (atmosphericPressure / 14.7)) + (0.018 * temperature - 0.0031);
+            return (-16.6999 - (0.0101059 * temperature) + (0.00116512 * temperature ** 2) + 
+                    (0.173354 * co2Volumes) + (4.24267 * temperature * co2Volumes) - 
+                    (0.0684226 * temperature ** 2 * co2Volumes));
+        }
+
+        // Dispensing pressure calculation logic
+        function calculateDispensingPressure(rise, run, resistancePerFoot, carbonationPressure) {
+            return (rise * 0.5) + (run * resistancePerFoot / 12) + carbonationPressure;
         }
 
         // Get CO2 volumes for selected style
         const co2Volumes = carbonationStyles[style];
 
+        // Get resistance per foot for the selected draft line type and size
+        const resistancePerFoot = draftLineResistance[draftLineType][draftLineSize];
+
         // Calculate carbonation pressure
         const carbonationPressure = calculateCarbonationPressure(temperature, co2Volumes);
 
-        let resultHtml = `
-            <h3>Results:</h3>
-            <p>Carbonation Pressure: <strong>${carbonationPressure.toFixed(2)} PSI</strong></p>
-        `;
-
-        if (includeDispensing) {
-            const rise = parseFloat(document.getElementById('rise').value);
-            const run = parseFloat(document.getElementById('run').value);
-            const draftLineType = document.getElementById('draftLineType').value;
-            const draftLineSize = document.getElementById('draftLineSize').value;
-
-            // Get resistance per foot for the selected draft line type and size
-            const resistancePerFoot = draftLineResistance[draftLineType][draftLineSize];
-
-            // Dispensing pressure calculation logic
-            function calculateDispensingPressure(rise, run, resistancePerFoot, carbonationPressure) {
-                return (rise * 0.5) + (run * resistancePerFoot / 12) + carbonationPressure;
-            }
-
-            // Calculate dispensing pressure
-            const dispensingPressure = calculateDispensingPressure(rise, run, resistancePerFoot, carbonationPressure);
-
-            resultHtml += `<p>Dispensing Pressure: <strong>${dispensingPressure.toFixed(2)} PSI</strong></p>`;
-        }
+        // Calculate dispensing pressure
+        const dispensingPressure = calculateDispensingPressure(rise, run, resistancePerFoot, carbonationPressure);
 
         // Display the results
-        document.getElementById('result').innerHTML = resultHtml;
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+            <h3>Results:</h3>
+            <p>Carbonation Pressure: <strong>${carbonationPressure.toFixed(2)} PSI</strong></p>
+            <p>Dispensing Pressure: <strong>${dispensingPressure.toFixed(2)} PSI</strong></p>
+        `;
     });
 </script>
 
