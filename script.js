@@ -149,22 +149,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         return pressure;
     }
 
-    // Function to calculate dispense pressure
-    function calculateDispensePressure() {
-        // Lookup resistance factor based on line type (D5)
-        const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
-
-        // Calculate adjusted run and rise based on unit
-        const adjustedRun = (unit === unitForFeet) ? lineRun / 0.305 : lineRun;
-        const adjustedRise = (unit === unitForFeet) ? lineRise / 0.305 : lineRise;
-
-        // Dispense pressure calculation based on provided formula
-        const dispensePressure = basePressure + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
-
-        console.log("Calculated Dispense Pressure:", dispensePressure);
-        document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+function calculateDispensePressure() {
+    // Ensure all required fields for dispense pressure are filled
+    if (!lineType || lineRun === null || lineRise === null) {
+        console.log("Dispense pressure calculation skipped due to incomplete input fields.");
+        return;  // Exit the function if any fields are missing
     }
 
+    // Lookup resistance factor based on line type (D5)
+    const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
+
+    // Calculate adjusted run and rise based on unit
+    const adjustedRun = (unit === unitForFeet) ? lineRun / 0.305 : lineRun;
+    const adjustedRise = (unit === unitForFeet) ? lineRise / 0.305 : lineRise;
+
+    // Dispense pressure calculation based on provided formula
+    const dispensePressure = basePressure + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
+
+    console.log("Calculated Dispense Pressure:", dispensePressure);
+    document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+}
     // Calculate and display both carbonation and dispense pressures on button click
     document.getElementById("calculateButton").addEventListener("click", () => {
         calculateAndDisplayPressure();  // Carbonation Pressure Calculation
