@@ -15,21 +15,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Call the function to load data when the page loads
     await loadCarbonationData();
 
-    // Base pressure for dispense calculation (this could be customized based on your specific setup)
-    const basePressure = 1; // Placeholder for E5, adjust as necessary
+    // Base pressure for dispense calculation (this is now dynamic based on carbonation pressure in PSI)
+    let carbonationPressurePSI = 0; // This will be set after carbonation pressure is calculated
 
     // Line types and resistance values based on provided data
     const lineTypes = ["3/16\" Vinyl", "1/4\" Vinyl", "5/16\" Vinyl", "3/8\" Vinyl", "1/2\" Vinyl", "3/16\" Polyethylene", "1/4\" Polyethylene", "3/8\" Stainless Steel", "5/16\" Stainless Steel", "1/4\" Stainless Steel"];
     const resistanceFactors = [3, 0.85, 0.4, 0.13, 0.025, 2.2, 0.5, 0.2, 0.5, 2];
     const unitForFeet = "ft";
 
-    // Capture user inputs for carbonation level, temperature, line type, run, and rise
+    // Capture user inputs for carbonation level, temperature, line type, run, rise, and unit
     let carbonationLevel = null;
     let temperature = null;
     let temperatureScale = "C";
     let lineType = null;
-    let lineRun = 0;
-    let lineRise = 0;
+    let lineRun = null;
+    let lineRise = null;
     let unit = unitForFeet;
 
     // Capture carbonation level selection
@@ -78,11 +78,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("lineForm").addEventListener("input", (event) => {
         if (event.target.id === "lineRun") {
-            lineRun = parseFloat(event.target.value) || 0;
+            lineRun = parseFloat(event.target.value) || null;
             console.log("Line Run (A5):", lineRun);
         }
         if (event.target.id === "lineRise") {
-            lineRise = parseFloat(event.target.value) || 0;
+            lineRise = parseFloat(event.target.value) || null;
             console.log("Line Rise (B5):", lineRise);
         }
     });
@@ -121,9 +121,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const pressureBAR = getPressureForCarbonationLevel(roundedTemp, carbonationLevel);
 
         if (pressureBAR !== null) {
-            const pressurePSI = pressureBAR * 14.5038; // Convert BAR to PSI
-            document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`;
-            console.log("Calculated Carbonation Pressure in BAR:", pressureBAR, "and in PSI:", pressurePSI);
+            carbonationPressurePSI = pressureBAR * 14.5038; // Convert BAR to PSI and store as carbonationPressurePSI
+            document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
+            console.log("Calculated Carbonation Pressure in BAR:", pressureBAR, "and in PSI:", carbonationPressurePSI);
         } else {
             document.getElementById("result").textContent = "Carbonation pressure not found for entered values.";
             console.log("Carbonation pressure not found for the entered values.");
@@ -149,26 +149,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         return pressure;
     }
 
-function calculateDispensePressure() {
-    // Ensure all required fields for dispense pressure are filled
-    if (!lineType || lineRun === null || lineRise === null) {
-        console.log("Dispense pressure calculation skipped due to incomplete input fields.");
-        return;  // Exit the function if any fields are missing
+    // Function to calculate dispense pressure
+    function calculateDispensePressure() {
+        // Ensure all required fields for dispense pressure are filled
+        if (!lineType || lineRun === null || lineRise === null) {
+            console.log("Dispense pressure calculation skipped due to incomplete input fields.");
+            return;  // Exit the function if any fields are missing
+        }
+
+        // Lookup resistance factor based on line type (D5)
+        const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
+
+        // Adjust run and rise based on unit (A13 for meters, A14 for feet)
+        const adjustedRun = (unit === "ft") ? lineRun / 0.305 : lineRun;
+        const adjustedRise = (unit === "ft") ? lineRise / 0.305 : lineRise;
+
+        // Use calculated carbonation pressure in PSI as E5
+        const dispensePressure = carbonationPressurePSI + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
+
+        console.log("Calculated Dispense Pressure:", dispensePressure);
+        document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
     }
 
-    // Lookup resistance factor based on line type (D5)
-    const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
-
-    // Adjust run and rise based on unit (A13 for meters, A14 for feet)
-    const adjustedRun = (unit === "ft") ? lineRun / 0.305 : lineRun;
-    const adjustedRise = (unit === "ft") ? lineRise / 0.305 : lineRise;
-
-    // Dispense pressure calculation based on provided formula
-    const dispensePressure = basePressure + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
-
-    console.log("Calculated Dispense Pressure:", dispensePressure);
-    document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
-}
     // Calculate and display both carbonation and dispense pressures on button click
     document.getElementById("calculateButton").addEventListener("click", () => {
         calculateAndDisplayPressure();  // Carbonation Pressure Calculation
