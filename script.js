@@ -15,10 +15,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Call the function to load data when the page loads
     await loadCarbonationData();
 
-    // Capture carbonation level
+    // Base pressure for dispense calculation (this could be customized based on your specific setup)
+    const basePressure = 1; // Placeholder for E5, adjust as necessary
+
+    // Line types and resistance values based on provided data
+    const lineTypes = ["3/16\" Vinyl", "1/4\" Vinyl", "5/16\" Vinyl", "3/8\" Vinyl", "1/2\" Vinyl", "3/16\" Polyethylene", "1/4\" Polyethylene", "3/8\" Stainless Steel", "5/16\" Stainless Steel", "1/4\" Stainless Steel"];
+    const resistanceFactors = [3, 0.85, 0.4, 0.13, 0.025, 2.2, 0.5, 0.2, 0.5, 2];
+    const unitForFeet = "ft";
+
+    // Capture user inputs for carbonation level, temperature, line type, run, and rise
+    let carbonationLevel = null;
+    let temperature = null;
+    let temperatureScale = "C";
+    let lineType = null;
+    let lineRun = 0;
+    let lineRise = 0;
+    let unit = unitForFeet;
+
+    // Capture carbonation level selection
     const carbonationForm = document.getElementById("carbonationForm");
     const customValue = document.getElementById("customValue");
-    let carbonationLevel = null;
 
     carbonationForm.addEventListener("change", () => {
         const selectedOption = carbonationForm.querySelector('input[name="carbonation"]:checked');
@@ -43,8 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Capture temperature and unit
     const temperatureInput = document.getElementById("temperature");
     const temperatureUnit = document.getElementById("temperatureUnit");
-    let temperature = null;
-    let temperatureScale = "C";
 
     temperatureInput.addEventListener("input", () => {
         temperature = temperatureInput.value ? parseFloat(temperatureInput.value) : null;
@@ -56,19 +70,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Temperature Unit Selected:", temperatureScale);
     });
 
+    // Capture line type, run, rise, and unit
+    document.getElementById("lineTypeForm").addEventListener("change", (event) => {
+        lineType = event.target.value;
+        console.log("Selected Line Type:", lineType);
+    });
+
+    document.getElementById("lineForm").addEventListener("input", (event) => {
+        if (event.target.id === "lineRun") {
+            lineRun = parseFloat(event.target.value) || 0;
+            console.log("Line Run (A5):", lineRun);
+        }
+        if (event.target.id === "lineRise") {
+            lineRise = parseFloat(event.target.value) || 0;
+            console.log("Line Rise (B5):", lineRise);
+        }
+    });
+
+    document.getElementById("lineRunUnit").addEventListener("change", (event) => {
+        unit = event.target.value;
+        console.log("Unit for Rise and Run (C5):", unit);
+    });
+
     // Function to convert Fahrenheit to Celsius
     function convertFahrenheitToCelsius(fahrenheit) {
         return (fahrenheit - 32) * (5 / 9);
     }
 
-    // Calculate and display pressure on button click
-    document.getElementById("calculateButton").addEventListener("click", () => {
-        calculateAndDisplayPressure();
-    });
-
-    // Lookup and calculate pressure based on temperature and carbonation level
+    // Lookup and calculate carbonation pressure based on temperature and carbonation level
     function calculateAndDisplayPressure() {
-        console.log("Starting calculation with values:", {
+        console.log("Starting carbonation pressure calculation with values:", {
             carbonationLevel,
             temperature,
             temperatureScale,
@@ -91,17 +122,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (pressureBAR !== null) {
             const pressurePSI = pressureBAR * 14.5038; // Convert BAR to PSI
-            document.getElementById("result").textContent = `Calculated Pressure: ${pressureBAR.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`;
-            console.log("Calculated Pressure in BAR:", pressureBAR, "and in PSI:", pressurePSI);
+            document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`;
+            console.log("Calculated Carbonation Pressure in BAR:", pressureBAR, "and in PSI:", pressurePSI);
         } else {
-            document.getElementById("result").textContent = "Pressure not found for entered values.";
-            console.log("Pressure not found for the entered values.");
+            document.getElementById("result").textContent = "Carbonation pressure not found for entered values.";
+            console.log("Carbonation pressure not found for the entered values.");
         }
     }
 
-    // Lookup function
+    // Function to get carbonation pressure based on temperature and carbonation level
     function getPressureForCarbonationLevel(temp, carbonationLevel) {
-        console.log("Looking up pressure for temperature:", temp, "and carbonation level:", carbonationLevel);
+        console.log("Looking up carbonation pressure for temperature:", temp, "and carbonation level:", carbonationLevel);
 
         const tempData = carbonationData[temp];
         if (!tempData) {
@@ -117,4 +148,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         return pressure;
     }
+
+    // Function to calculate dispense pressure
+    function calculateDispensePressure() {
+        // Lookup resistance factor based on line type (D5)
+        const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
+
+        // Calculate adjusted run and rise based on unit
+        const adjustedRun = (unit === unitForFeet) ? lineRun / 0.305 : lineRun;
+        const adjustedRise = (unit === unitForFeet) ? lineRise / 0.305 : lineRise;
+
+        // Dispense pressure calculation based on provided formula
+        const dispensePressure = basePressure + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
+
+        console.log("Calculated Dispense Pressure:", dispensePressure);
+        document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+    }
+
+    // Calculate and display both carbonation and dispense pressures on button click
+    document.getElementById("calculateButton").addEventListener("click", () => {
+        calculateAndDisplayPressure();  // Carbonation Pressure Calculation
+        calculateDispensePressure();    // Dispense Pressure Calculation
+    });
 });
