@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Temperature Unit Selected:", temperatureScale);
     });
 
-    // Capture line type selection
+    // Capture line type selection and update lineType immediately
     document.getElementById("lineTypeForm").addEventListener("change", (event) => {
         lineType = event.target.value;
         console.log("Selected Line Type:", lineType); // Log to confirm capture
