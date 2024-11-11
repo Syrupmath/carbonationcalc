@@ -29,6 +29,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     let lineRise = null;
     let unit = unitForFeet;
 
+    // Set the default line type when the page loads and trigger change event
+    const lineTypeSelect = document.getElementById("lineType");
+    const defaultLineType = lineTypeSelect.value; // Get the initial line type from the select element
+    console.log("Default Line Type Set:", defaultLineType); // Log to confirm default is set
+
     // Capture carbonation level selection
     const carbonationForm = document.getElementById("carbonationForm");
     const customValue = document.getElementById("customValue");
@@ -103,9 +108,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function calculateDispensePressure() {
-        // Reference lineType directly from the form
-        const lineTypeForm = document.getElementById("lineTypeForm");
-        const lineType = lineTypeForm.value;
+        // Reference lineType directly from the <select> element
+        const lineType = lineTypeSelect.value;
         console.log("Using Line Type:", lineType);  // Log to confirm value
 
         // Log all input values to verify they are captured correctly
