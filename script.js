@@ -30,6 +30,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     let lineRise = null;
     let unit = unitForFeet;
 
+    // Set the default line type when the page loads
+    const lineTypeForm = document.getElementById("lineTypeForm");
+    lineType = lineTypeForm.value; // Set the initial line type to the default selected value
+    console.log("Default Line Type Set:", lineType); // Log to confirm default is set
+
     // Capture carbonation level selection
     const carbonationForm = document.getElementById("carbonationForm");
     const customValue = document.getElementById("customValue");
@@ -62,8 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Temperature Unit Selected:", temperatureScale);
     });
 
-    // Capture line type selection and update lineType immediately
-    document.getElementById("lineTypeForm").addEventListener("change", (event) => {
+    // Update lineType on user change
+    lineTypeForm.addEventListener("change", (event) => {
         lineType = event.target.value;
         console.log("Selected Line Type:", lineType); // Log to confirm capture
     });
