@@ -106,20 +106,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         return tempData ? tempData[carbonationLevel] : null;
     }
 
-    function calculateDispensePressure() {
-        if (!lineType || lineRun === null || lineRise === null || carbonationPressurePSI === 0) {
-            console.log("Dispense pressure calculation skipped due to missing inputs.");
-            return;
-        }
+function calculateDispensePressure() {
+    // Log all input values to verify they are captured correctly
+    console.log("Dispense Pressure Calculation Inputs:", {
+        lineType: lineType,
+        lineRun: lineRun,
+        lineRise: lineRise,
+        carbonationPressurePSI: carbonationPressurePSI,
+        unit: unit
+    });
 
-        const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
-        const adjustedRun = (unit === "ft") ? lineRun / 0.305 : lineRun;
-        const adjustedRise = (unit === "ft") ? lineRise / 0.305 : lineRise;
-        const dispensePressure = carbonationPressurePSI + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
-
-        console.log("Calculated Dispense Pressure:", dispensePressure);
-        document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+    // Ensure all required fields for dispense pressure are filled
+    if (!lineType || lineRun === null || lineRise === null || carbonationPressurePSI === 0) {
+        console.log("Dispense pressure calculation skipped due to missing or incomplete input fields.");
+        return;  // Exit the function if any fields are missing
     }
+
+    // Lookup resistance factor based on line type (D5)
+    const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
+
+    // Adjust run and rise based on unit (meters or feet)
+    const adjustedRun = (unit === "ft") ? lineRun / 0.305 : lineRun;
+    const adjustedRise = (unit === "ft") ? lineRise / 0.305 : lineRise;
+
+    // Use calculated carbonation pressure in PSI as E5
+    const dispensePressure = carbonationPressurePSI + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
+
+    console.log("Calculated Dispense Pressure:", dispensePressure);
+    document.getElementById("result").textContent += ` | Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+}
 
     document.getElementById("calculateButton").addEventListener("click", () => {
         calculateAndDisplayPressure();
