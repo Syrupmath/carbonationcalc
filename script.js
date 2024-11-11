@@ -25,16 +25,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let carbonationLevel = null;
     let temperature = null;
     let temperatureScale = "C";
-    let lineType = null;
     let lineRun = null;
     let lineRise = null;
     let unit = unitForFeet;
-
-    // Set the default line type when the page loads and trigger change event
-    const lineTypeForm = document.getElementById("lineTypeForm");
-    lineType = lineTypeForm.value; // Set the initial line type to the default selected value
-    lineTypeForm.dispatchEvent(new Event("change")); // Trigger change event to register initial value
-    console.log("Default Line Type Set and Event Triggered:", lineType); // Log to confirm default is set
 
     // Capture carbonation level selection
     const carbonationForm = document.getElementById("carbonationForm");
@@ -66,12 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     temperatureUnit.addEventListener("change", () => {
         temperatureScale = temperatureUnit.value;
         console.log("Temperature Unit Selected:", temperatureScale);
-    });
-
-    // Update lineType on user change
-    lineTypeForm.addEventListener("change", (event) => {
-        lineType = event.target.value;
-        console.log("Selected Line Type:", lineType); // Log to confirm capture
     });
 
     // Capture line run and rise inputs
@@ -116,6 +103,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function calculateDispensePressure() {
+        // Reference lineType directly from the form
+        const lineTypeForm = document.getElementById("lineTypeForm");
+        const lineType = lineTypeForm.value;
+        console.log("Using Line Type:", lineType);  // Log to confirm value
+
         // Log all input values to verify they are captured correctly
         console.log("Dispense Pressure Calculation Inputs:", {
             lineType: lineType,  // Ensure lineType is logged here
