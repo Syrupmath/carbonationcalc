@@ -159,9 +159,9 @@ function calculateDispensePressure() {
     // Lookup resistance factor based on line type (D5)
     const resistanceFactor = lineTypes.includes(lineType) ? resistanceFactors[lineTypes.indexOf(lineType)] : 0;
 
-    // Calculate adjusted run and rise based on unit
-    const adjustedRun = (unit === unitForFeet) ? lineRun / 0.305 : lineRun;
-    const adjustedRise = (unit === unitForFeet) ? lineRise / 0.305 : lineRise;
+    // Adjust run and rise based on unit (A13 for meters, A14 for feet)
+    const adjustedRun = (unit === "ft") ? lineRun / 0.305 : lineRun;
+    const adjustedRise = (unit === "ft") ? lineRise / 0.305 : lineRise;
 
     // Dispense pressure calculation based on provided formula
     const dispensePressure = basePressure + (resistanceFactor * adjustedRun) + (adjustedRise / 2) + 1;
