@@ -1,4 +1,4 @@
-let carbonationData;
+let carbonationData; // Only declared once
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Load JSON data
@@ -87,4 +87,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         for (let i = 0; i < levels.length; i++) {
             if (levels[i] <= targetLevel) lowerLevel = levels[i];
             if (levels[i] >= targetLevel) {
-                upperLevel
+                upperLevel = levels[i];
+                break;
+            }
+        }
+
+        if (lowerLevel === null || upperLevel === null) return null;
+
+        const lowerPressure = pressureData[lowerLevel];
+        const upperPressure = pressureData[upperLevel];
+
+        return lowerLevel !== upperLevel
+            ? lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure)
+            : lowerPressure;
+    }
+});
