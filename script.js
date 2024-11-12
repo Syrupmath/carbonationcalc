@@ -1,110 +1,95 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    let carbonationData;
+async function calculatePressure(targetTemperature, targetCarbonationLevel) {
+    // Check if target temperature and carbonation level are valid numbers
+    console.log("Target Temperature (Celsius):", targetTemperature);
+    console.log("Target Carbonation Level:", targetCarbonationLevel);
 
-    // Load JSON data
-    async function loadCarbonationData() {
-        try {
-            const response = await fetch("data.json");
-            carbonationData = await response.json();
-            console.log("Carbonation data loaded successfully:", carbonationData);
-        } catch (error) {
-            console.error("Error loading carbonation data:", error);
+    if (isNaN(targetTemperature) || isNaN(targetCarbonationLevel)) {
+        console.log("Invalid temperature or carbonation level input.");
+        return "Invalid temperature or carbonation level";
+    }
+
+    // Get available temperature keys from the data and sort them
+    const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
+    console.log("Available Temperatures:", temperatures);
+
+    // Find the closest temperatures around the target temperature
+    let lowerTemp = null;
+    let upperTemp = null;
+
+    for (let i = 0; i < temperatures.length; i++) {
+        if (temperatures[i] <= targetTemperature) lowerTemp = temperatures[i];
+        if (temperatures[i] >= targetTemperature) {
+            upperTemp = temperatures[i];
+            break;
         }
     }
 
-    await loadCarbonationData();
+    console.log("Lower Temperature:", lowerTemp);
+    console.log("Upper Temperature:", upperTemp);
 
-    // Function to capture all input values on button click
-    document.getElementById("calculateButton").addEventListener("click", async () => {
-        // Capture temperature, carbonation level, line rise/run values, and units
-        const temperatureInput = document.getElementById("temperature").value;
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const carbonationLevelInput = document.querySelector('input[name="carbonation"]:checked')?.value || document.getElementById("customValue").value;
+    // If target temperature is out of range
+    if (lowerTemp === null || upperTemp === null) {
+        console.log("Temperature out of range in data.json");
+        return "Invalid temperature range";
+    }
 
-        const lineRun = parseFloat(document.getElementById("lineRun").value) || null;
-        const lineRunUnit = document.getElementById("lineRunUnit").value;
-        const lineRise = parseFloat(document.getElementById("lineRise").value) || null;
-        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
+    // Get pressure data for the lower and upper temperatures at the target carbonation level
+    const lowerPressure = getPressureAtLevel(carbonationData[lowerTemp], targetCarbonationLevel);
+    const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
 
-        console.log("Temperature:", temperatureInput, temperatureUnit);
-        console.log("Carbonation Level:", carbonationLevelInput);
-        console.log("Line Run:", lineRun, lineRunUnit);
-        console.log("Line Rise:", lineRise, lineRiseUnit);
+    console.log("Lower Pressure:", lowerPressure);
+    console.log("Upper Pressure:", upperPressure);
 
-        // Parse temperature and carbonation level as needed
-        const targetTemperature = temperatureUnit === "F" ? (parseFloat(temperatureInput) - 32) * (5 / 9) : parseFloat(temperatureInput);
-        const targetCarbonationLevel = parseFloat(carbonationLevelInput);
+    // If the carbonation level is out of range
+    if (lowerPressure === null || upperPressure === null) {
+        console.log("Carbonation level out of range in data.json");
+        return "Invalid carbonation level";
+    }
 
-        // Perform the calculation only if all required fields are valid
-        if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
-            const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
-            const carbonationPressurePSI = pressureBAR * 14.5038;
+    // Perform linear interpolation between the two temperatures
+    const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
+    console.log("Interpolated Pressure:", interpolatedPressure);
+    return interpolatedPressure;
+}
 
-            if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
-                document.getElementById("result").textContent = pressureBAR;
-            } else {
-                document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
-            }
-        } else {
-            document.getElementById("result").textContent = "Please enter all required values.";
+function getPressureAtLevel(pressureData, targetLevel) {
+    // Convert carbonation levels to numbers and sort them
+    const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
+    console.log("Available Carbonation Levels for Current Temperature:", levels);
+
+    let lowerLevel = null;
+    let upperLevel = null;
+
+    for (let i = 0; i < levels.length; i++) {
+        if (levels[i] <= targetLevel) lowerLevel = levels[i];
+        if (levels[i] >= targetLevel) {
+            upperLevel = levels[i];
+            break;
         }
-    });
+    }
 
-    async function calculatePressure(targetTemperature, targetCarbonationLevel) {
-        const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
+    console.log("Lower Carbonation Level:", lowerLevel);
+    console.log("Upper Carbonation Level:", upperLevel);
 
-        let lowerTemp = null;
-        let upperTemp = null;
+    // If target level is out of range
+    if (lowerLevel === null || upperLevel === null) {
+        console.log("Out of range for carbonation level");
+        return null;
+    }
 
-        for (let i = 0; i < temperatures.length; i++) {
-            if (temperatures[i] <= targetTemperature) lowerTemp = temperatures[i];
-            if (temperatures[i] >= targetTemperature) {
-                upperTemp = temperatures[i];
-                break;
-            }
-        }
+    // Get pressures for the lower and upper carbonation levels
+    const lowerPressure = pressureData[lowerLevel];
+    const upperPressure = pressureData[upperLevel];
+    console.log("Lower Pressure for Level:", lowerPressure);
+    console.log("Upper Pressure for Level:", upperPressure);
 
-        if (lowerTemp === null || upperTemp === null) {
-            return "Invalid temperature range";
-        }
-
-        const lowerPressure = getPressureAtLevel(carbonationData[lowerTemp], targetCarbonationLevel);
-        const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
-
-        if (lowerPressure === null || upperPressure === null) {
-            return "Invalid carbonation level";
-        }
-
-        const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        console.log(`Interpolated Pressure: ${interpolatedPressure}`);
+    // Perform linear interpolation if the target level is between two levels
+    if (lowerLevel !== upperLevel) {
+        const interpolatedPressure = lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
+        console.log("Interpolated Pressure for Carbonation Level:", interpolatedPressure);
         return interpolatedPressure;
     }
 
-    function getPressureAtLevel(pressureData, targetLevel) {
-        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-
-        let lowerLevel = null;
-        let upperLevel = null;
-
-        for (let i = 0; i < levels.length; i++) {
-            if (levels[i] <= targetLevel) lowerLevel = levels[i];
-            if (levels[i] >= targetLevel) {
-                upperLevel = levels[i];
-                break;
-            }
-        }
-
-        if (lowerLevel === null || upperLevel === null) {
-            return null;
-        }
-
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
-
-        if (lowerLevel !== upperLevel) {
-            return lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
-        }
-
-        return lowerPressure;
-    }
-});
+    // If exact level found
+    return lowerPressure;
+}
