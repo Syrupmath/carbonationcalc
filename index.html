@@ -12,6 +12,89 @@
     <h2>Step 1: Select Carbonation Level</h2>
     <form id="carbonationForm">
         <label>
+            <input type="radio" name="carbonation" value="5"> American Lager - Light and refreshing with a gentle fizz
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="6"> Italian Sparkling Water - Crisp and effervescent
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="7.9"> Bottled Cola - Bold and bubbly, with a satisfying fizz
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="8.5"> German Hefeweizen - Vibrant and lively, with a rich, frothy finish
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="9"> French Champagne - Bursting with bubbles, elegant and celebratory
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="custom"> Custom
+            <input type="number" id="customValue" placeholder="Enter custom g/L" disabled>
+        </label>
+    </form>
+
+    <!-- Step 2: Enter Temperature -->
+    <h2>Step 2: Enter the Temperature of Your Liquid</h2>
+    <label for="temperature">Temperature:</label>
+    <input type="number" id="temperature" placeholder="Enter temperature">
+    <select id="temperatureUnit">
+        <option value="C">Celsius</option>
+        <option value="F">Fahrenheit</option>
+    </select>
+
+    <!-- Step 3: Enter Line Rise and Run -->
+    <h2>Step 3: Enter the Rise and Run of Your Line (Optional)</h2>
+    <form id="lineForm">
+        <label for="lineRise">Line Rise:</label>
+        <input type="number" id="lineRise" name="lineRise" placeholder="Enter rise distance">
+        <select id="lineRiseUnit" name="lineRiseUnit">
+            <option value="ft">Feet</option>
+            <option value="m">Meters</option>
+        </select>
+        <br>
+        <label for="lineRun">Line Run:</label>
+        <input type="number" id="lineRun" name="lineRun" placeholder="Enter run distance">
+        <select id="lineRunUnit" name="lineRunUnit">
+            <option value="ft">Feet</option>
+            <option value="m">Meters</option>
+        </select>
+    </form>
+
+    <!-- Step 4: Choose Line Type and Diameter -->
+    <h2>Step 4: Choose Line Type and Diameter (Optional)</h2>
+    <label for="lineType">Line Type and Diameter:</label>
+    <select id="lineType" name="lineType">
+        <option value="3/16 Vinyl">3/16" Vinyl</option>
+        <option value="1/4 Vinyl">1/4" Vinyl</option>
+        <option value="5/16 Vinyl">5/16" Vinyl</option>
+        <option value="3/8 Vinyl">3/8" Vinyl</option>
+        <option value="1/2 Vinyl">1/2" Vinyl</option>
+        <option value="3/16 Polyethylene">3/16" Polyethylene</option>
+        <option value="1/4 Polyethylene">1/4" Polyethylene</option>
+        <option value="3/8 Stainless Steel">3/8" Stainless Steel</option>
+        <option value="5/16 Stainless Steel">5/16" Stainless Steel</option>
+        <option value="1/4 Stainless Steel">1/4" Stainless Steel</option>
+    </select>
+
+    <!-- Calculate Button and Result Display -->
+    <button id="calculateButton">Calculate</button>
+    <p id="result"></p>
+
+    <script src="script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonation Calculator</title>
+</head>
+<body>
+    <h1>Carbonation and Draft Cocktail Calculator</h1>
+
+    <!-- Step 1: Select Carbonation Level -->
+    <h2>Step 1: Select Carbonation Level</h2>
+    <form id="carbonationForm">
+        <label>
             <input type="radio" name="carbonation" value="5"> American Lager
         </label>
         <label>
