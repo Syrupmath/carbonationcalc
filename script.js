@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     let carbonationData;
 
-    // Load JSON data (assumes data.json is in the same directory)
+    // Load JSON data
     async function loadCarbonationData() {
         try {
             const response = await fetch("data.json");
@@ -12,10 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Call the function to load data when the page loads
     await loadCarbonationData();
-
-    let carbonationPressurePSI = 0; // Placeholder for calculated carbonation pressure in PSI
 
     const temperatureInput = document.getElementById("temperature");
     const temperatureUnit = document.getElementById("temperatureUnit");
@@ -61,25 +58,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
             document.getElementById("result").textContent = pressureBAR;
         } else {
-            carbonationPressurePSI = pressureBAR * 14.5038; // Convert BAR to PSI
+            const carbonationPressurePSI = pressureBAR * 14.5038; // Convert BAR to PSI
             document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
         }
     });
 
-    // Function to calculate pressure based on temperature and carbonation level
     async function calculatePressure(targetTemperature, targetCarbonationLevel, isFahrenheit = false) {
-        // Convert Fahrenheit to Celsius if needed
         if (isFahrenheit) {
             targetTemperature = (targetTemperature - 32) * (5 / 9);
         }
 
-        // Round the target temperature to an integer for lookup
         targetTemperature = Math.round(targetTemperature);
 
-        // Get available temperature keys from the data and sort them
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
 
-        // Find the closest temperatures around the target temperature
         let lowerTemp = null;
         let upperTemp = null;
 
@@ -91,29 +83,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // If target temperature is out of range
         if (lowerTemp === null || upperTemp === null) {
+            console.log("Invalid temperature range detected");
             return "Invalid temperature range";
         }
 
-        // Get pressure data for the lower and upper temperatures at the target carbonation level
         const lowerPressure = getPressureAtLevel(carbonationData[lowerTemp], targetCarbonationLevel);
         const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
 
-        // If the carbonation level is out of range
         if (lowerPressure === null || upperPressure === null) {
+            console.log("Invalid carbonation level detected");
             return "Invalid carbonation level";
         }
 
-        // Perform linear interpolation between the two temperatures
         const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        
+        console.log(`Interpolated Pressure: ${interpolatedPressure}`);
         return interpolatedPressure;
     }
 
-    // Helper function to get the pressure at a specific carbonation level, using linear interpolation if needed
     function getPressureAtLevel(pressureData, targetLevel) {
-        // Convert carbonation levels to numbers and sort them
         const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
 
         let lowerLevel = null;
@@ -127,21 +115,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // If target level is out of range
         if (lowerLevel === null || upperLevel === null) {
+            console.log("Out of range for carbonation level");
             return null;
         }
 
-        // Get pressures for the lower and upper carbonation levels
         const lowerPressure = pressureData[lowerLevel];
         const upperPressure = pressureData[upperLevel];
 
-        // Perform linear interpolation if the target level is between two levels
         if (lowerLevel !== upperLevel) {
             return lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
         }
 
-        // If exact level found
         return lowerPressure;
     }
 });
