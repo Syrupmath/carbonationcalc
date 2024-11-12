@@ -1,4 +1,4 @@
-let carbonationData; // Only declared once
+let carbonationData; // Only declare this once at the very beginning
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Load JSON data
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
-    // Capture all input values on button click
+    // Event listener for the Calculate button
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
