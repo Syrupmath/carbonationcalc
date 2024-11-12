@@ -1,7 +1,6 @@
-let carbonationData; // Only declare this once at the very beginning
+let carbonationData;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Load JSON data
     async function loadCarbonationData() {
         try {
             const response = await fetch("data.json");
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
-    // Event listener for the Calculate button
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
@@ -33,10 +31,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Line Rise:", lineRise, lineRiseUnit);
         console.log("Line Type:", lineType);
 
-        // Adjust temperature based on unit
         const targetTemperature = temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
 
-        // Calculate carbonation pressure if all required fields are valid
         if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
             const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
             const carbonationPressurePSI = pressureBAR * 14.5038;
@@ -67,12 +63,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        if (lowerTemp === null || upperTemp === null) return "Invalid temperature range";
+        console.log("Lower Temperature:", lowerTemp);
+        console.log("Upper Temperature:", upperTemp);
+
+        if (lowerTemp === null || upperTemp === null) {
+            console.log("Invalid temperature range detected.");
+            return "Invalid temperature range";
+        }
 
         const lowerPressure = getPressureAtLevel(carbonationData[lowerTemp], targetCarbonationLevel);
         const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
 
-        if (lowerPressure === null || upperPressure === null) return "Invalid carbonation level";
+        console.log("Lower Pressure:", lowerPressure);
+        console.log("Upper Pressure:", upperPressure);
+
+        if (lowerPressure === null || upperPressure === null) {
+            console.log("Invalid carbonation level detected.");
+            return "Invalid carbonation level";
+        }
 
         const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
         console.log("Final Interpolated Pressure:", interpolatedPressure);
@@ -81,6 +89,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function getPressureAtLevel(pressureData, targetLevel) {
         const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
+        console.log("Available Carbonation Levels for Current Temperature:", levels);
+
         let lowerLevel = null;
         let upperLevel = null;
 
@@ -92,13 +102,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        if (lowerLevel === null || upperLevel === null) return null;
+        console.log("Lower Carbonation Level:", lowerLevel);
+        console.log("Upper Carbonation Level:", upperLevel);
+
+        if (lowerLevel === null || upperLevel === null) {
+            console.log("Out of range for carbonation level");
+            return null;
+        }
 
         const lowerPressure = pressureData[lowerLevel];
         const upperPressure = pressureData[upperLevel];
+        console.log("Lower Pressure for Level:", lowerPressure);
+        console.log("Upper Pressure for Level:", upperPressure);
 
-        return lowerLevel !== upperLevel
-            ? lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure)
-            : lowerPressure;
+        if (lowerLevel !== upperLevel) {
+            const interpolatedPressure = lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
+            console.log("Interpolated Pressure for Carbonation Level:", interpolatedPressure);
+            return interpolatedPressure;
+        }
+
+        return lowerPressure;
     }
 });
