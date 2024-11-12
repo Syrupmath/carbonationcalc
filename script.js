@@ -14,62 +14,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
-    const temperatureInput = document.getElementById("temperature");
-    const temperatureUnit = document.getElementById("temperatureUnit");
-    const carbonationForm = document.getElementById("carbonationForm");
-    const customValue = document.getElementById("customValue");
-
-    let targetTemperature = null;
-    let isFahrenheit = false;
-    let targetCarbonationLevel = null;
-
-    carbonationForm.addEventListener("change", () => {
-        const selectedOption = carbonationForm.querySelector('input[name="carbonation"]:checked');
-        if (selectedOption) {
-            targetCarbonationLevel = selectedOption.value === "custom" ? parseFloat(customValue.value) || null : parseFloat(selectedOption.value);
-            customValue.disabled = selectedOption.value !== "custom";
-            if (selectedOption.value !== "custom") customValue.value = "";
-            console.log("Carbonation Level Selected:", targetCarbonationLevel);
-        }
-    });
-
-    customValue.addEventListener("input", () => {
-        targetCarbonationLevel = parseFloat(customValue.value) || null;
-        console.log("Custom Carbonation Level Entered:", targetCarbonationLevel);
-    });
-
-    temperatureInput.addEventListener("input", () => {
-        targetTemperature = temperatureInput.value ? parseFloat(temperatureInput.value) : null;
-        console.log("Temperature Entered:", targetTemperature);
-    });
-
-    temperatureUnit.addEventListener("change", () => {
-        isFahrenheit = temperatureUnit.value === "F";
-        console.log("Temperature Unit Selected:", isFahrenheit ? "Fahrenheit" : "Celsius");
-    });
-
+    // Function to capture all input values on button click
     document.getElementById("calculateButton").addEventListener("click", async () => {
-        if (targetTemperature === null || targetCarbonationLevel === null) {
-            document.getElementById("result").textContent = "Please enter all required values.";
-            return;
-        }
+        // Capture temperature, carbonation level, line rise/run values, and units
+        const temperatureInput = document.getElementById("temperature").value;
+        const temperatureUnit = document.getElementById("temperatureUnit").value;
+        const carbonationLevelInput = document.querySelector('input[name="carbonation"]:checked')?.value || document.getElementById("customValue").value;
 
-        const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel, isFahrenheit);
-        if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
-            document.getElementById("result").textContent = pressureBAR;
+        const lineRun = parseFloat(document.getElementById("lineRun").value) || null;
+        const lineRunUnit = document.getElementById("lineRunUnit").value;
+        const lineRise = parseFloat(document.getElementById("lineRise").value) || null;
+        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
+
+        console.log("Temperature:", temperatureInput, temperatureUnit);
+        console.log("Carbonation Level:", carbonationLevelInput);
+        console.log("Line Run:", lineRun, lineRunUnit);
+        console.log("Line Rise:", lineRise, lineRiseUnit);
+
+        // Parse temperature and carbonation level as needed
+        const targetTemperature = temperatureUnit === "F" ? (parseFloat(temperatureInput) - 32) * (5 / 9) : parseFloat(temperatureInput);
+        const targetCarbonationLevel = parseFloat(carbonationLevelInput);
+
+        // Perform the calculation only if all required fields are valid
+        if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
+            const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
+            const carbonationPressurePSI = pressureBAR * 14.5038;
+
+            if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
+                document.getElementById("result").textContent = pressureBAR;
+            } else {
+                document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
+            }
         } else {
-            const carbonationPressurePSI = pressureBAR * 14.5038; // Convert BAR to PSI
-            document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
+            document.getElementById("result").textContent = "Please enter all required values.";
         }
     });
 
-    async function calculatePressure(targetTemperature, targetCarbonationLevel, isFahrenheit = false) {
-        if (isFahrenheit) {
-            targetTemperature = (targetTemperature - 32) * (5 / 9);
-        }
-
-        targetTemperature = Math.round(targetTemperature);
-
+    async function calculatePressure(targetTemperature, targetCarbonationLevel) {
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
 
         let lowerTemp = null;
@@ -84,7 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         if (lowerTemp === null || upperTemp === null) {
-            console.log("Invalid temperature range detected");
             return "Invalid temperature range";
         }
 
@@ -92,7 +72,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
 
         if (lowerPressure === null || upperPressure === null) {
-            console.log("Invalid carbonation level detected");
             return "Invalid carbonation level";
         }
 
@@ -116,7 +95,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         if (lowerLevel === null || upperLevel === null) {
-            console.log("Out of range for carbonation level");
             return null;
         }
 
