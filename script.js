@@ -82,6 +82,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             return "Invalid carbonation level";
         }
 
+        // Check if interpolation is necessary
+        if (lowerTemp === upperTemp && lowerPressure === upperPressure) {
+            console.log("No interpolation needed, returning exact pressure:", lowerPressure);
+            return lowerPressure; // No interpolation needed
+        }
+
         const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
         console.log("Final Interpolated Pressure:", interpolatedPressure);
         return interpolatedPressure;
