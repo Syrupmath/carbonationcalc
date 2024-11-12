@@ -48,7 +48,9 @@ async function calculatePressure(targetTemperature, targetCarbonationLevel) {
 
     // Perform linear interpolation between the two temperatures
     const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-    console.log("Interpolated Pressure:", interpolatedPressure);
+    console.log("Interpolated Pressure Calculation:", `lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure)`);
+    console.log(`Interpolated Pressure Values: lowerPressure=${lowerPressure}, targetTemperature=${targetTemperature}, lowerTemp=${lowerTemp}, upperTemp=${upperTemp}, upperPressure=${upperPressure}`);
+    console.log("Final Interpolated Pressure:", interpolatedPressure);
     return interpolatedPressure;
 }
 
