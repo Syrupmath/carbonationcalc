@@ -82,9 +82,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             return "Invalid carbonation level";
         }
 
-        // Check if interpolation is necessary
+        // Direct return if no interpolation is needed
         if (lowerTemp === upperTemp && lowerPressure === upperPressure) {
-            console.log("No interpolation needed, returning exact pressure:", lowerPressure);
+            console.log("Exact match found. Returning exact pressure:", lowerPressure);
             return lowerPressure; // No interpolation needed
         }
 
