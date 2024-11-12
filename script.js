@@ -39,19 +39,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
                 document.getElementById("result").textContent = pressureBAR;
+                document.getElementById("dispenseResult").textContent = ""; // Clear dispense result if invalid
             } else {
                 document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
-            }
 
-            // Calculate dispense pressure if line run, rise, and type are provided
-            if (lineRun && lineRise && lineType) {
-                const dispensePressure = calculateDispensePressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit);
-                document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
-            } else {
-                document.getElementById("dispenseResult").textContent = ""; // Clear if not all fields are filled
+                // Calculate dispense pressure if line run, rise, and type are provided
+                if (lineRun !== null && lineRise !== null && lineType) {
+                    const dispensePressure = calculateDispensePressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit);
+                    document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+                } else {
+                    document.getElementById("dispenseResult").textContent = ""; // Clear if not all fields are filled
+                }
             }
         } else {
             document.getElementById("result").textContent = "Please enter all required values.";
+            document.getElementById("dispenseResult").textContent = ""; // Clear dispense result if invalid
         }
     });
 
