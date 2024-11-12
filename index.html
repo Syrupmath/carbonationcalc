@@ -1,104 +1,84 @@
-let carbonationData; // Only declare this once at the very beginning
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonation Calculator</title>
+</head>
+<body>
+    <h1>Carbonation and Draft Cocktail Calculator</h1>
 
-document.addEventListener("DOMContentLoaded", async () => {
-    // Load JSON data
-    async function loadCarbonationData() {
-        try {
-            const response = await fetch("data.json");
-            carbonationData = await response.json();
-            console.log("Carbonation data loaded successfully:", carbonationData);
-        } catch (error) {
-            console.error("Error loading carbonation data:", error);
-        }
-    }
+    <!-- Step 1: Select Carbonation Level -->
+    <h2>Step 1: Select Carbonation Level</h2>
+    <form id="carbonationForm">
+        <label>
+            <input type="radio" name="carbonation" value="5"> American Lager - Light and refreshing with a gentle fizz
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="6"> Italian Sparkling Water - Crisp and effervescent
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="7.9"> Bottled Cola - Bold and bubbly, with a satisfying fizz
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="8.5"> German Hefeweizen - Vibrant and lively, with a rich, frothy finish
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="9"> French Champagne - Bursting with bubbles, elegant and celebratory
+        </label><br>
+        <label>
+            <input type="radio" name="carbonation" value="custom"> Custom
+            <input type="number" id="customValue" placeholder="Enter custom g/L" disabled>
+        </label>
+    </form>
 
-    await loadCarbonationData();
+    <!-- Step 2: Enter Temperature -->
+    <h2>Step 2: Enter the Temperature of Your Liquid</h2>
+    <label for="temperature">Temperature:</label>
+    <input type="number" id="temperature" placeholder="Enter temperature">
+    <select id="temperatureUnit">
+        <option value="C">Celsius</option>
+        <option value="F">Fahrenheit</option>
+    </select>
 
-    // Event listener for the Calculate button
-    document.getElementById("calculateButton").addEventListener("click", async () => {
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const carbonationLevelInput = document.querySelector('input[name="carbonation"]:checked')?.value;
-        const targetCarbonationLevel = carbonationLevelInput === "custom" ? parseFloat(document.getElementById("customValue").value) : parseFloat(carbonationLevelInput);
+    <!-- Step 3: Enter Line Rise and Run -->
+    <h2>Step 3: Enter the Rise and Run of Your Line (Optional)</h2>
+    <form id="lineForm">
+        <label for="lineRise">Line Rise:</label>
+        <input type="number" id="lineRise" name="lineRise" placeholder="Enter rise distance">
+        <select id="lineRiseUnit" name="lineRiseUnit">
+            <option value="ft">Feet</option>
+            <option value="m">Meters</option>
+        </select>
+        <br>
+        <label for="lineRun">Line Run:</label>
+        <input type="number" id="lineRun" name="lineRun" placeholder="Enter run distance">
+        <select id="lineRunUnit" name="lineRunUnit">
+            <option value="ft">Feet</option>
+            <option value="m">Meters</option>
+        </select>
+    </form>
 
-        const lineRun = parseFloat(document.getElementById("lineRun").value) || null;
-        const lineRunUnit = document.getElementById("lineRunUnit").value;
-        const lineRise = parseFloat(document.getElementById("lineRise").value) || null;
-        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
-        const lineType = document.getElementById("lineType").value;
+    <!-- Step 4: Choose Line Type and Diameter -->
+    <h2>Step 4: Choose Line Type and Diameter (Optional)</h2>
+    <label for="lineType">Line Type and Diameter:</label>
+    <select id="lineType" name="lineType">
+        <option value="3/16 Vinyl">3/16" Vinyl</option>
+        <option value="1/4 Vinyl">1/4" Vinyl</option>
+        <option value="5/16 Vinyl">5/16" Vinyl</option>
+        <option value="3/8 Vinyl">3/8" Vinyl</option>
+        <option value="1/2 Vinyl">1/2" Vinyl</option>
+        <option value="3/16 Polyethylene">3/16" Polyethylene</option>
+        <option value="1/4 Polyethylene">1/4" Polyethylene</option>
+        <option value="3/8 Stainless Steel">3/8" Stainless Steel</option>
+        <option value="5/16 Stainless Steel">5/16" Stainless Steel</option>
+        <option value="1/4 Stainless Steel">1/4" Stainless Steel</option>
+    </select>
 
-        console.log("Temperature:", temperatureInput, temperatureUnit);
-        console.log("Carbonation Level:", targetCarbonationLevel);
-        console.log("Line Run:", lineRun, lineRunUnit);
-        console.log("Line Rise:", lineRise, lineRiseUnit);
-        console.log("Line Type:", lineType);
+    <!-- Calculate Button and Result Display -->
+    <button id="calculateButton">Calculate</button>
+    <p id="result"></p>
 
-        // Adjust temperature based on unit
-        const targetTemperature = temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
-
-        // Calculate carbonation pressure if all required fields are valid
-        if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
-            const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
-            const carbonationPressurePSI = pressureBAR * 14.5038;
-
-            if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
-                document.getElementById("result").textContent = pressureBAR;
-            } else {
-                document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
-            }
-        } else {
-            document.getElementById("result").textContent = "Please enter all required values.";
-        }
-    });
-
-    async function calculatePressure(targetTemperature, targetCarbonationLevel) {
-        console.log("Target Temperature (Celsius):", targetTemperature);
-        console.log("Target Carbonation Level:", targetCarbonationLevel);
-
-        const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
-        let lowerTemp = null;
-        let upperTemp = null;
-
-        for (let i = 0; i < temperatures.length; i++) {
-            if (temperatures[i] <= targetTemperature) lowerTemp = temperatures[i];
-            if (temperatures[i] >= targetTemperature) {
-                upperTemp = temperatures[i];
-                break;
-            }
-        }
-
-        if (lowerTemp === null || upperTemp === null) return "Invalid temperature range";
-
-        const lowerPressure = getPressureAtLevel(carbonationData[lowerTemp], targetCarbonationLevel);
-        const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
-
-        if (lowerPressure === null || upperPressure === null) return "Invalid carbonation level";
-
-        const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        console.log("Final Interpolated Pressure:", interpolatedPressure);
-        return interpolatedPressure;
-    }
-
-    function getPressureAtLevel(pressureData, targetLevel) {
-        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-        let lowerLevel = null;
-        let upperLevel = null;
-
-        for (let i = 0; i < levels.length; i++) {
-            if (levels[i] <= targetLevel) lowerLevel = levels[i];
-            if (levels[i] >= targetLevel) {
-                upperLevel = levels[i];
-                break;
-            }
-        }
-
-        if (lowerLevel === null || upperLevel === null) return null;
-
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
-
-        return lowerLevel !== upperLevel
-            ? lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure)
-            : lowerPressure;
-    }
-});
+    <script src="script.js"></script>
+</body>
+</html>
