@@ -8,15 +8,15 @@ fetch("data.json")
     })
     .catch(error => console.error("Error loading carbonation data:", error));
 
-// Enable/disable custom carbonation input dynamically
+// Add event listeners to dynamically enable or disable the custom carbonation input
 document.querySelectorAll('input[name="carbonation"]').forEach(radio => {
     radio.addEventListener("change", function () {
         const customValueField = document.getElementById("customValue");
         if (this.value === "custom") {
-            customValueField.disabled = false; // Enable custom input
-            customValueField.focus(); // Optional: Focus on the custom field
+            customValueField.disabled = false; // Enable the field
+            customValueField.focus(); // Focus on the field
         } else {
-            customValueField.disabled = true; // Disable custom input
+            customValueField.disabled = true; // Disable the field
             customValueField.value = ""; // Clear the value
         }
     });
