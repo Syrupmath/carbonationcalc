@@ -7,11 +7,9 @@
 </head>
 <body>
     <h1>Carbonation and Draft Cocktail Calculator</h1>
-    <p>This tool calculates the carbonation pressure needed for carbonated cocktails, sodas, sparkling waters, and more.</p>
-    
+
     <!-- Step 1: Select Carbonation Level -->
     <h2>Step 1: Select Carbonation Level</h2>
-    <p>To begin, select the style of carbonation you're looking to achieve, or enter your own value for extra precision.</p>
     <form id="carbonationForm">
         <label>
             <input type="radio" name="carbonation" value="5">American Lager</label>
@@ -37,14 +35,10 @@
     <input type="radio" name="carbonation" value="custom" id="customRadio">Custom
     <input type="number" id="customValue" placeholder="Enter custom g/L">
         </label>
-
-        <div id="carbonationFeedback"></div>
-        
     </form>
 
     <!-- Step 2: Enter Temperature -->
     <h2>Step 2: Enter the Temperature of Your Liquid</h2>
-    <p>Next, enter the temperature of your liquid and select the appropriate unit.</p>
     <label for="temperature">Temperature:</label>
     <input type="number" id="temperature" placeholder="Enter temperature">
     <select id="temperatureUnit">
