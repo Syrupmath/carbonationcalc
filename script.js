@@ -8,40 +8,17 @@ fetch("data.json")
     })
     .catch(error => console.error("Error loading carbonation data:", error));
 
-// Enable/disable custom carbonation input dynamically
-document.querySelectorAll('input[name="carbonation"]').forEach(radio => {
-    radio.addEventListener("change", function () {
-        const customValueField = document.getElementById("customValue");
-        if (this.value === "custom") {
-            customValueField.disabled = false; // Enable custom input
-            customValueField.focus(); // Optional: Focus on the custom field
-        } else {
-            customValueField.disabled = true; // Disable custom input
-            customValueField.value = ""; // Clear the value
-        }
-    });
-});
-
 // Main calculation logic
 document.getElementById("calculateButton").addEventListener("click", () => {
     const selectedCarbonationOption = document.querySelector('input[name="carbonation"]:checked')?.value;
-    const customValue = parseFloat(document.getElementById("customValue").value);
 
-    // Determine the target carbonation level
-    let targetCarbonationLevel;
-    if (selectedCarbonationOption === "custom") {
-        if (isNaN(customValue) || customValue <= 0) {
-            document.getElementById("result").textContent = "Please enter a valid custom carbonation level.";
-            return;
-        }
-        targetCarbonationLevel = customValue;
-    } else {
-        targetCarbonationLevel = parseFloat(selectedCarbonationOption);
-    }
+    // Parse carbonation level (no custom logic)
+    const targetCarbonationLevel = parseFloat(selectedCarbonationOption);
+    console.log("Target Carbonation Level:", targetCarbonationLevel);
 
-    // Validate the target carbonation level
+    // Validate the carbonation level
     if (isNaN(targetCarbonationLevel) || targetCarbonationLevel <= 0) {
-        document.getElementById("result").textContent = "Invalid carbonation level. Please select or enter a valid value.";
+        document.getElementById("result").textContent = "Invalid carbonation level. Please select a valid value.";
         return;
     }
 
@@ -60,7 +37,11 @@ document.getElementById("calculateButton").addEventListener("click", () => {
         const lowerTemp = tempKeys.filter(t => t <= temperature).pop();
         const upperTemp = tempKeys.find(t => t >= temperature);
 
+        console.log("Temperature keys:", tempKeys);
+        console.log("Lower temperature:", lowerTemp, "Upper temperature:", upperTemp);
+
         if (lowerTemp === undefined || upperTemp === undefined) {
+            console.error("Temperature is out of range!");
             return null; // Temperature out of range
         }
 
@@ -68,13 +49,20 @@ document.getElementById("calculateButton").addEventListener("click", () => {
         const lowerPressure = carbonationData[lowerTemp]?.[carbonationLevel];
         const upperPressure = carbonationData[upperTemp]?.[carbonationLevel];
 
+        console.log("Lower pressure:", lowerPressure, "Upper pressure:", upperPressure);
+
         if (lowerPressure === undefined || upperPressure === undefined) {
+            console.error("Carbonation level is out of range!");
             return null; // Carbonation level out of range
         }
 
         // Linear interpolation
         const ratio = (temperature - lowerTemp) / (upperTemp - lowerTemp);
-        return lowerPressure + ratio * (upperPressure - lowerPressure);
+        const interpolatedPressure = lowerPressure + ratio * (upperPressure - lowerPressure);
+
+        console.log("Interpolated pressure:", interpolatedPressure);
+
+        return interpolatedPressure;
     }
 
     const carbonationPressure = calculatePressure(temperature, targetCarbonationLevel);
@@ -83,38 +71,8 @@ document.getElementById("calculateButton").addEventListener("click", () => {
         return;
     }
 
-    // Get dispensing parameters if enabled
-    const includeDispensing = document.getElementById("includeDispensing").checked;
-    let dispensingPressure = null;
-
-    if (includeDispensing) {
-        const rise = parseFloat(document.getElementById("rise").value) || 0;
-        const run = parseFloat(document.getElementById("run").value) || 0;
-        const draftLineType = document.getElementById("draftLineType").value;
-        const draftLineSize = document.getElementById("draftLineSize").value;
-
-        // Resistance per foot for the selected draft line type and size
-        const draftLineResistance = {
-            "vinyl": { "3/16": 2.7, "1/4": 0.85, "5/16": 0.40 },
-            "stainless_steel": { "3/16": 0.7, "1/4": 0.4, "5/16": 0.2 },
-            "polyethylene": { "3/16": 1.0, "1/4": 0.5, "5/16": 0.25 }
-        };
-
-        const resistancePerFoot = draftLineResistance[draftLineType]?.[draftLineSize];
-        if (resistancePerFoot === undefined) {
-            document.getElementById("result").textContent = "Invalid draft line type or size.";
-            return;
-        }
-
-        // Calculate dispensing pressure
-        dispensingPressure = (rise * 0.5) + (run * resistancePerFoot / 12) + carbonationPressure;
-    }
-
     // Display the results
-    let resultHtml = `<h3>Results:</h3>
+    const resultHtml = `<h3>Results:</h3>
         <p>Carbonation Pressure: <strong>${carbonationPressure.toFixed(2)} PSI</strong></p>`;
-    if (includeDispensing && dispensingPressure !== null) {
-        resultHtml += `<p>Dispensing Pressure: <strong>${dispensingPressure.toFixed(2)} PSI</strong></p>`;
-    }
     document.getElementById("result").innerHTML = resultHtml;
 });
