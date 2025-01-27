@@ -19,31 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         customRadio.checked = true;
     });
 
-    // Validate the temperature input
-    function validateTemperature(temperatureInput, temperatureUnit) {
-        const targetTemperature =
-            temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
-
-        // Check if temperature is a valid number
-        if (isNaN(targetTemperature)) {
-            document.getElementById("result").textContent = "Please enter a valid numeric temperature.";
-            return null;
-        }
-
-        // Check if temperature is within the range of carbonationData
-        const temperatures = Object.keys(carbonationData).map(Number);
-        const minTemp = Math.min(...temperatures);
-        const maxTemp = Math.max(...temperatures);
-
-        if (targetTemperature < minTemp || targetTemperature > maxTemp) {
-            document.getElementById("result").textContent = `Temperature is out of range. Enter a value between ${minTemp}°C and ${maxTemp}°C.`;
-            return null;
-        }
-
-        // Return the valid target temperature
-        return targetTemperature;
-    }
-
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
@@ -62,12 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Line Rise:", lineRise, lineRiseUnit);
         console.log("Line Type:", lineType);
 
-        // Step 1: Validate Temperature
-        const targetTemperature = validateTemperature(temperatureInput, temperatureUnit);
-        if (targetTemperature === null) {
-            // Stop further processing if temperature validation fails
-            return;
-        }
+        const targetTemperature = temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
 
         if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
             const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
@@ -191,11 +161,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         const resistance = lineResistances[lineType] || 0;
-        const runInFeet = lineRunUnit === "m" ? lineRun / 0.305 : lineRun;
-        const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.305 : lineRise;
-
-        const dispensePressure = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-        console.log("Calculated Dispense Pressure:", dispensePressure);
-        return dispensePressure;
-    }
-});
+        const runInFeet = lineRunUnit === "m" ? lineRun / 
