@@ -22,8 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const validationResults = [
             validateCarbonationSelection(),
-            validateTemperatureInput(),
-            validateDispensingFields() // Validate Steps 3 and 4
+            validateTemperatureInput()
         ];
 
         // Stop calculation if any validation fails
@@ -222,35 +221,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return true;
     }
 
-    function validateDispensingFields() {
-        const lineRun = document.getElementById("lineRun").value.trim();
-        const lineRise = document.getElementById("lineRise").value.trim();
-        const lineType = document.getElementById("lineType").value;
-        const lineRunUnit = document.getElementById("lineRunUnit").value;
-        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
-
-        const lineError = document.getElementById("lineError");
-
-        // Check if either Line Rise or Line Run has been filled
-        const isLineRunOrRiseFilled = lineRun !== "" || lineRise !== "";
-
-        if (isLineRunOrRiseFilled) {
-            // Validate all required fields for dispensing
-            const isLineRunValid = !lineRun || !isNaN(parseFloat(lineRun));
-            const isLineRiseValid = !lineRise || !isNaN(parseFloat(lineRise));
-
-            if (!isLineRunValid || !isLineRiseValid || !lineType || !lineRunUnit || !lineRiseUnit) {
-                lineError.style.display = "inline";
-                lineError.textContent =
-                    "Please fill out all dispensing fields (Line Run, Line Rise, Line Type, Line Run Unit, and Line Rise Unit) with valid values.";
-                return false;
-            }
-        }
-
-        // Hide the error if everything is valid or fields are optional
-        lineError.style.display = "none";
-        return true;
-    }
-
     document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
-    document.getElementById("temperatureUnit").addEvent
+    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
+});
