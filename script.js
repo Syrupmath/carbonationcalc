@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const validationResults = [
             validateCarbonationSelection(),
             validateTemperatureInput(),
-            validateDispensingFields()
+            validateDispensingFields() // Validate Steps 3 and 4
         ];
 
         // Stop calculation if any validation fails
@@ -176,4 +176,85 @@ document.addEventListener("DOMContentLoaded", async () => {
         const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.305 : lineRise;
 
         const dispensePressure = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-        console.log("Calculated Dispense
+        console.log("Calculated Dispense Pressure:", dispensePressure);
+        return dispensePressure;
+    }
+
+    function validateTemperatureInput() {
+        const temperatureInput = document.getElementById("temperature").value;
+        const temperatureUnit = document.getElementById("temperatureUnit").value;
+        const temperatureError = document.getElementById("temperatureError");
+
+        // Convert the input to Celsius if the user enters Fahrenheit
+        const convertedTemperature =
+            temperatureUnit === "F"
+                ? (parseFloat(temperatureInput) - 32) * (5 / 9)
+                : parseFloat(temperatureInput);
+
+        const temperatures = Object.keys(carbonationData).map(Number);
+        const minTemp = Math.min(...temperatures);
+        const maxTemp = Math.max(...temperatures);
+
+        // Validate input
+        if (isNaN(convertedTemperature) || convertedTemperature < minTemp || convertedTemperature > maxTemp) {
+            temperatureError.style.display = "inline";
+            temperatureError.textContent = `Please enter a temperature between ${minTemp}°C and ${maxTemp}°C.`;
+            return false;
+        }
+
+        // Hide the error if valid
+        temperatureError.style.display = "none";
+        return true;
+    }
+
+    function validateCarbonationSelection() {
+        const selectedOption = document.querySelector('input[name="carbonation"]:checked');
+        const carbonationError = document.getElementById("carbonationError");
+
+        if (!selectedOption) {
+            carbonationError.style.display = "inline";
+            carbonationError.textContent = "Please select a carbonation level.";
+            return false;
+        }
+
+        // Hide the error if valid
+        carbonationError.style.display = "none";
+        return true;
+    }
+
+    function validateDispensingFields() {
+        const lineRun = document.getElementById("lineRun").value.trim();
+        const lineRise = document.getElementById("lineRise").value.trim();
+        const lineType = document.getElementById("lineType").value;
+        const lineRunUnit = document.getElementById("lineRunUnit").value;
+        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
+
+        const lineError = document.getElementById("lineError");
+
+        // Check if either Line Rise or Line Run is filled
+        const isLineRunOrRiseFilled = lineRun !== "" || lineRise !== "";
+
+        if (isLineRunOrRiseFilled) {
+            // Validate all required fields for dispensing
+            if (
+                (lineRun && isNaN(parseFloat(lineRun))) || 
+                (lineRise && isNaN(parseFloat(lineRise))) ||
+                !lineType || 
+                !lineRunUnit || 
+                !lineRiseUnit
+            ) {
+                lineError.style.display = "inline";
+                lineError.textContent =
+                    "Please fill out all dispensing fields (Line Run, Line Rise, Line Type, Line Run Unit, and Line Rise Unit) with valid values.";
+                return false;
+            }
+        }
+
+        // Hide the error if everything is valid
+        lineError.style.display = "none";
+        return true;
+    }
+
+    document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
+    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
+});
