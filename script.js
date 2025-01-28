@@ -19,32 +19,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         customRadio.checked = true;
     });
 
-    // Validate the temperature input
-    function validateTemperature(temperatureInput, temperatureUnit) {
-        const targetTemperature =
-            temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
-
-        // Check if temperature is a valid number
-        if (isNaN(targetTemperature)) {
-            document.getElementById("result").textContent = "Please enter a valid numeric temperature.";
-            return null;
-        }
-
-        // Check if temperature is within the range of carbonationData
-        const temperatures = Object.keys(carbonationData).map(Number);
-        const minTemp = Math.min(...temperatures);
-        const maxTemp = Math.max(...temperatures);
-
-        if (targetTemperature < minTemp || targetTemperature > maxTemp) {
-            document.getElementById("result").textContent = `Temperature is out of range. Enter a value between ${minTemp}°C and ${maxTemp}°C.`;
-            return null;
-        }
-
-        // Return the valid target temperature
-        return targetTemperature;
-    }
-
     document.getElementById("calculateButton").addEventListener("click", async () => {
+        if (!validateTemperatureInput()) {
+            return; // Stop calculation if temperature is invalid
+        }
+
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
         const carbonationLevelInput = document.querySelector('input[name="carbonation"]:checked')?.value;
@@ -62,12 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Line Rise:", lineRise, lineRiseUnit);
         console.log("Line Type:", lineType);
 
-        // Step 1: Validate Temperature
-        const targetTemperature = validateTemperature(temperatureInput, temperatureUnit);
-        if (targetTemperature === null) {
-            // Stop further processing if temperature validation fails
-            return;
-        }
+        const targetTemperature = temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
 
         if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
             const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
@@ -198,4 +172,34 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Calculated Dispense Pressure:", dispensePressure);
         return dispensePressure;
     }
+
+    function validateTemperatureInput() {
+        const temperatureInput = document.getElementById("temperature").value;
+        const temperatureUnit = document.getElementById("temperatureUnit").value;
+        const temperatureError = document.getElementById("temperatureError");
+
+        // Convert the input to Celsius if the user enters Fahrenheit
+        const convertedTemperature =
+            temperatureUnit === "F"
+                ? (parseFloat(temperatureInput) - 32) * (5 / 9)
+                : parseFloat(temperatureInput);
+
+        const temperatures = Object.keys(carbonationData).map(Number);
+        const minTemp = Math.min(...temperatures);
+        const maxTemp = Math.max(...temperatures);
+
+        // Validate input
+        if (isNaN(convertedTemperature) || convertedTemperature < minTemp || convertedTemperature > maxTemp) {
+            temperatureError.style.display = "inline";
+            temperatureError.textContent = `Please enter a temperature between ${minTemp}°C and ${maxTemp}°C.`;
+            return false;
+        }
+
+        // Hide the error if valid
+        temperatureError.style.display = "none";
+        return true;
+    }
+
+    document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
+    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
 });
