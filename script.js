@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             validateDispensingInputs();
         } else {
             hideError("lineError"); // Clear error if no Step 3 inputs are provided
-            document.getElementById("dispenseResult").textContent = ""; // Clear dispense result
+            clearResult("dispenseResult");
         }
     });
 
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         let upperTemp = temperatures.find((t) => t >= temperature);
 
         if (lowerTemp === undefined || upperTemp === undefined) {
-            document.getElementById("result").textContent = "Invalid temperature range.";
+            displayResult("resultContainer", "Invalid temperature range.", false);
             return;
         }
 
@@ -85,14 +85,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
 
         if (lowerPressure === null || upperPressure === null) {
-            document.getElementById("result").textContent = "Invalid carbonation level.";
+            displayResult("resultContainer", "Invalid carbonation level.", false);
             return;
         }
 
         const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
         const pressurePSI = interpolatedPressure * 14.5038;
 
-        document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`;
+        displayResult(
+            "resultContainer",
+            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`,
+            true
+        );
     }
 
     function interpolateCarbonationLevel(pressureData, targetLevel) {
@@ -145,7 +149,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const resistance = lineResistances[lineType] || 0;
         const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
 
-        document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+        displayResult(
+            "resultContainer",
+            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`,
+            true
+        );
     }
 
     function step3HasInput() {
@@ -154,6 +162,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const lineRise = document.getElementById("lineRise").value;
 
         return lineType || lineRun || lineRise; // Returns true if any field is filled
+    }
+
+    function displayResult(containerId, message, success) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = ""; // Clear previous results
+        const resultCard = document.createElement("div");
+        resultCard.style.border = success ? "2px solid green" : "2px solid red";
+        resultCard.style.padding = "10px";
+        resultCard.style.marginTop = "10px";
+        resultCard.textContent = message;
+        container.appendChild(resultCard);
+    }
+
+    function clearResult(containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
     }
 
     function showError(elementId, message) {
