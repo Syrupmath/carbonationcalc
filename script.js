@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
+    // Automatically select the "Custom" radio button when the custom input field gains focus
+    document.getElementById("customValue").addEventListener("focus", function () {
+        const customRadio = document.querySelector('input[name="carbonation"][value="custom"]');
+        customRadio.checked = true;
+    });
+
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
