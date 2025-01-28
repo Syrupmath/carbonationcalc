@@ -20,8 +20,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("calculateButton").addEventListener("click", async () => {
-        if (!validateCarbonationSelection() || !validateTemperatureInput()) {
-            return; // Stop calculation if validation fails
+        const validationResults = [
+            validateCarbonationSelection(),
+            validateTemperatureInput()
+        ];
+
+        // Stop calculation if any validation fails
+        if (validationResults.includes(false)) {
+            return;
         }
 
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
