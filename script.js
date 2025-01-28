@@ -20,8 +20,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("calculateButton").addEventListener("click", async () => {
-        if (!validateTemperatureInput()) {
-            return; // Stop calculation if temperature is invalid
+        if (!validateCarbonationSelection() || !validateTemperatureInput()) {
+            return; // Stop calculation if validation fails
         }
 
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
@@ -197,6 +197,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Hide the error if valid
         temperatureError.style.display = "none";
+        return true;
+    }
+
+    function validateCarbonationSelection() {
+        const selectedOption = document.querySelector('input[name="carbonation"]:checked');
+        const carbonationError = document.getElementById("carbonationError");
+
+        if (!selectedOption) {
+            carbonationError.style.display = "inline";
+            carbonationError.textContent = "Please select a carbonation level.";
+            return false;
+        }
+
+        // Hide the error if valid
+        carbonationError.style.display = "none";
         return true;
     }
 
