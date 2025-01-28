@@ -57,7 +57,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideError("temperatureError");
 
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
-        validateDispensingInputs();
+
+        // Only validate Step 3 if any of its fields are filled
+        if (step3HasInput()) {
+            validateDispensingInputs();
+        } else {
+            hideError("lineError"); // Clear error if no Step 3 inputs are provided
+            document.getElementById("dispenseResult").textContent = ""; // Clear dispense result
+        }
     });
 
     function calculateCarbonationPressure(temperature, carbonationLevel) {
@@ -139,6 +146,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
 
         document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
+    }
+
+    function step3HasInput() {
+        const lineType = document.getElementById("lineType").value;
+        const lineRun = document.getElementById("lineRun").value;
+        const lineRise = document.getElementById("lineRise").value;
+
+        return lineType || lineRun || lineRise; // Returns true if any field is filled
     }
 
     function showError(elementId, message) {
