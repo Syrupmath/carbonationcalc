@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Carbonation and Draft Cocktail Calculator</h1>
-
+    <p>This simple tool calculates the pressure needed to carbonate beverages such as cocktails, sodas, or water to your desired style. It can also be used to calculate disense pressure for kegged cocktails on draft.</p>
     <!-- Step 1: Select Carbonation Level -->
     <h2>Step 1: Select Carbonation Level</h2>
     <form id="carbonationForm">
@@ -35,6 +35,7 @@
     <input type="radio" name="carbonation" value="custom" id="customRadio">Custom
     <input type="number" id="customValue" placeholder="Enter custom g/L">
         </label>
+        <small id="carbonationError" class="error-message" style="color: red; display: none;">Please select a carbonation level.</small>
     </form>
 
     <!-- Step 2: Enter Temperature -->
