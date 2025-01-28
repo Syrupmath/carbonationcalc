@@ -7,12 +7,13 @@
 </head>
 <body>
     <h1>Carbonation and Draft Cocktail Calculator</h1>
+    <p id="author">by <a href="https://shop.crossroads.bar/" target="_blank" aria-label="Link to website, opens in a new window">Crossroads Bar</a> and <a href="https://jeffreymorgenthaler.com/the-batch-cocktail-calculator/" target="_blank" aria-label="Link to website, opens in a new window">Jeffrey Morgenthaler</a></p>
     <p>This simple tool calculates the pressure needed to carbonate beverages such as cocktails, sodas, or water to your desired style. It can also be used to calculate dispense pressure for kegged beverages served on draft.</p>
     <p>To get started, you will need a CO<sub>2</sub> tank with regulator, hoses, and ball lock quick disconnects, and either a keg with ball lock posts, or a PET bottle and carbonation cap.</p>
 
     <!-- Step 1: Select Carbonation Level -->
     <h2>Step 1: Select Carbonation Level</h2>
-    <p>Choose the general level of carbonation you'd like in your finished beverage from the list of sample styles below. Alternatively, you can enter your own custom level for more precision.</p>
+    <p>Choose the general level of carbonation you'd like in your finished beverage from the list of sample styles below. Alternatively, you can enter your own custom level for more precision. Note: these values are intended as guidelines and depend on a number of other factors.</p>
     <form id="carbonationForm">
         <label>
             <input type="radio" name="carbonation" value="5">American Lager
@@ -48,7 +49,7 @@
 
     <!-- Step 2: Enter Temperature -->
     <h2>Step 2: Enter the Temperature of Your Liquid</h2>
-    <p>Carbon dioxide is more soluble in colder liquids. Chill your beverage thoroughly (overnight in the refrigerator works great) and enter the temperature here. The temperature must be between 0°C (32°F) and 30°C (86°F).</p>
+    <p>Carbon dioxide is more soluble in colder liquids. Chill your beverage thoroughly (overnight in the refrigerator works well) and enter the temperature here. The temperature must be between 0°C (32°F) and 30°C (86°F) to work properly.</p>
     <label for="temperature">Temperature:</label>
     <input type="number" id="temperature" placeholder="Enter temperature">
     <select id="temperatureUnit">
@@ -76,18 +77,18 @@
         <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
     </select><br>
 
-    <label for="lineRun">Line Run:</label>
-    <input type="number" id="lineRun" placeholder="Enter line run (e.g., 10)">
-    <select id="lineRunUnit">
-        <option value="ft">Feet</option>
-        <option value="m">Meters</option>
-    </select><br>
-
     <label for="lineRise">Line Rise:</label>
     <input type="number" id="lineRise" placeholder="Enter line rise (e.g., 5)">
     <select id="lineRiseUnit">
-        <option value="ft">Feet</option>
         <option value="m">Meters</option>
+        <option value="ft">Feet</option>
+    </select><br>
+    
+    <label for="lineRun">Line Run:</label>
+    <input type="number" id="lineRun" placeholder="Enter line run (e.g., 10)">
+    <select id="lineRunUnit">
+        <option value="m">Meters</option>
+        <option value="ft">Feet</option>
     </select><br>
 
     <small id="lineError" style="color: red; display: none;">Please fill out all required fields for dispensing pressure calculation.</small>
