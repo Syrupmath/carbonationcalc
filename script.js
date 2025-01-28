@@ -19,17 +19,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         customRadio.checked = true;
     });
 
-document.getElementById("calculateButton").addEventListener("click", async () => {
-    const validationResults = [
-        validateCarbonationSelection(),
-        validateTemperatureInput(),
-        validateDispensingFields() // Ensure this is being called
-    ];
+    document.getElementById("calculateButton").addEventListener("click", async () => {
+        const validationResults = [
+            validateCarbonationSelection(),
+            validateTemperatureInput(),
+            validateDispensingFields() // Validate Steps 3 and 4
+        ];
 
-    if (validationResults.includes(false)) {
         // Stop calculation if any validation fails
-        return;
-    }
+        if (validationResults.includes(false)) {
+            return;
+        }
 
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
@@ -222,32 +222,35 @@ document.getElementById("calculateButton").addEventListener("click", async () =>
         return true;
     }
 
-function validateDispensingFields() {
-    const lineRun = document.getElementById("lineRun").value.trim();
-    const lineRise = document.getElementById("lineRise").value.trim();
-    console.log("Line Run:", lineRun, "Line Rise:", lineRise); // Debug user inputs
+    function validateDispensingFields() {
+        const lineRun = document.getElementById("lineRun").value.trim();
+        const lineRise = document.getElementById("lineRise").value.trim();
+        const lineType = document.getElementById("lineType").value;
+        const lineRunUnit = document.getElementById("lineRunUnit").value;
+        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
 
-    const isLineRunOrRiseFilled = lineRun !== "" || lineRise !== "";
-    console.log("Is Line Run or Rise Filled:", isLineRunOrRiseFilled); // Debug logic
+        const lineError = document.getElementById("lineError");
 
-    if (isLineRunOrRiseFilled) {
-        // Validate all required fields
-        const isLineRunValid = !lineRun || !isNaN(parseFloat(lineRun));
-        const isLineRiseValid = !lineRise || !isNaN(parseFloat(lineRise));
+        // Check if either Line Rise or Line Run has been filled
+        const isLineRunOrRiseFilled = lineRun !== "" || lineRise !== "";
 
-        if (!isLineRunValid || !isLineRiseValid || !lineType || !lineRunUnit || !lineRiseUnit) {
-            lineError.style.display = "inline";
-            lineError.textContent =
-                "Please fill out all dispensing fields (Line Run, Line Rise, Line Type, Line Run Unit, and Line Rise Unit) with valid values.";
-            return false;
+        if (isLineRunOrRiseFilled) {
+            // Validate all required fields for dispensing
+            const isLineRunValid = !lineRun || !isNaN(parseFloat(lineRun));
+            const isLineRiseValid = !lineRise || !isNaN(parseFloat(lineRise));
+
+            if (!isLineRunValid || !isLineRiseValid || !lineType || !lineRunUnit || !lineRiseUnit) {
+                lineError.style.display = "inline";
+                lineError.textContent =
+                    "Please fill out all dispensing fields (Line Run, Line Rise, Line Type, Line Run Unit, and Line Rise Unit) with valid values.";
+                return false;
+            }
         }
+
+        // Hide the error if everything is valid or fields are optional
+        lineError.style.display = "none";
+        return true;
     }
 
-    // Hide the error if everything is valid or fields are optional
-    lineError.style.display = "none";
-    return true;
-}
-
     document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
-    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
-});
+    document.getElementById("temperatureUnit").addEvent
