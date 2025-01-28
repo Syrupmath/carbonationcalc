@@ -19,10 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("customRadio").checked = true;
     });
 
-    // Set default unit for Line Run and Line Rise to Meters
-    document.getElementById("lineRunUnit").value = "m";
-    document.getElementById("lineRiseUnit").value = "m";
-
     // Handle calculations on button click
     document.getElementById("calculateButton").addEventListener("click", () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
