@@ -20,15 +20,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("calculateButton").addEventListener("click", async () => {
-        const validationResults = [
-            validateCarbonationSelection(),
-            validateTemperatureInput(),
-            validateDispensingFields() // Validate Step 3
-        ];
-
-        // Stop calculation if any validation fails
-        if (validationResults.includes(false)) {
-            return;
+        if (!validateTemperatureInput()) {
+            return; // Stop calculation if temperature is invalid
         }
 
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
@@ -60,12 +53,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else {
                 document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
 
-                // Calculate dispense pressure if all dispensing fields are provided
-                if (lineRun !== null && lineRise !== null && lineType && lineRunUnit && lineRiseUnit) {
+                // Calculate dispense pressure if line run, rise, and type are provided
+                if (lineRun !== null && lineRise !== null && lineType) {
                     const dispensePressure = calculateDispensePressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit);
                     document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
                 } else {
-                    document.getElementById("dispenseResult").textContent = "Dispensing pressure not calculated (optional fields incomplete).";
+                    document.getElementById("dispenseResult").textContent = ""; // Clear if not all fields are filled
                 }
             }
         } else {
@@ -183,4 +176,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     function validateTemperatureInput() {
         const temperatureInput = document.getElementById("temperature").value;
         const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const temperatureError = document.getElementById("temperature
+        const temperatureError = document.getElementById("temperatureError");
+
+        // Convert the input to Celsius if the user enters Fahrenheit
+        const convertedTemperature =
+            temperatureUnit === "F"
+                ? (parseFloat(temperatureInput) - 32) * (5 / 9)
+                : parseFloat(temperatureInput);
+
+        const temperatures = Object.keys(carbonationData).map(Number);
+        const minTemp = Math.min(...temperatures);
+        const maxTemp = Math.max(...temperatures);
+
+        // Validate input
+        if (isNaN(convertedTemperature) || convertedTemperature < minTemp || convertedTemperature > maxTemp) {
+            temperatureError.style.display = "inline";
+            temperatureError.textContent = `Please enter a temperature between ${minTemp}°C and ${maxTemp}°C.`;
+            return false;
+        }
+
+        // Hide the error if valid
+        temperatureError.style.display = "none";
+        return true;
+    }
+
+    document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
+    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
+});
