@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideError("temperatureError");
 
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
+        validateDispensingInputs();
     });
 
     function calculateCarbonationPressure(temperature, carbonationLevel) {
@@ -101,6 +102,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         return lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
+    }
+
+    function validateDispensingInputs() {
+        const lineType = document.getElementById("lineType").value;
+        const lineRun = document.getElementById("lineRun").value;
+        const lineRise = document.getElementById("lineRise").value;
+
+        if (!lineType || !lineRun || !lineRise) {
+            showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
+        } else {
+            hideError("lineError");
+            calculateDispensingPressure(lineType, parseFloat(lineRun), parseFloat(lineRise));
+        }
+    }
+
+    function calculateDispensingPressure(lineType, lineRun, lineRise) {
+        const lineResistances = {
+            "3/16 Vinyl": 3,
+            "1/4 Vinyl": 0.85,
+            "5/16 Vinyl": 0.4,
+            "3/8 Vinyl": 0.13,
+            "1/2 Vinyl": 0.025,
+            "3/16 Polyethylene": 2.2,
+            "1/4 Polyethylene": 0.5,
+            "3/8 Stainless Steel": 0.2,
+            "5/16 Stainless Steel": 0.5,
+            "1/4 Stainless Steel": 2
+        };
+
+        const resistance = lineResistances[lineType] || 0;
+        const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
+
+        document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
     }
 
     function showError(elementId, message) {
