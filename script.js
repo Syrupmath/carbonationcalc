@@ -1,6 +1,7 @@
-let carbonationData;
-
 document.addEventListener("DOMContentLoaded", async () => {
+    let carbonationData;
+
+    // Load carbonation data
     async function loadCarbonationData() {
         try {
             const response = await fetch("data.json");
@@ -13,193 +14,78 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
-    // Automatically select the "Custom" radio button when the custom input field gains focus
-    document.getElementById("customValue").addEventListener("focus", function () {
-        const customRadio = document.querySelector('input[name="carbonation"][value="custom"]');
-        customRadio.checked = true;
+    // Automatically select "Custom" radio on custom input focus
+    document.getElementById("customValue").addEventListener("focus", () => {
+        document.getElementById("customRadio").checked = true;
     });
 
-    document.getElementById("calculateButton").addEventListener("click", async () => {
-        if (!validateTemperatureInput()) {
-            return; // Stop calculation if temperature is invalid
-        }
-
+    // Handle calculations on button click
+    document.getElementById("calculateButton").addEventListener("click", () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const carbonationLevelInput = document.querySelector('input[name="carbonation"]:checked')?.value;
-        const targetCarbonationLevel = carbonationLevelInput === "custom" ? parseFloat(document.getElementById("customValue").value) : parseFloat(carbonationLevelInput);
+        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
 
-        const lineRun = parseFloat(document.getElementById("lineRun").value) || null;
-        const lineRunUnit = document.getElementById("lineRunUnit").value;
-        const lineRise = parseFloat(document.getElementById("lineRise").value) || null;
-        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
-        const lineType = document.getElementById("lineType").value;
-
-        console.log("Temperature:", temperatureInput, temperatureUnit);
-        console.log("Carbonation Level:", targetCarbonationLevel);
-        console.log("Line Run:", lineRun, lineRunUnit);
-        console.log("Line Rise:", lineRise, lineRiseUnit);
-        console.log("Line Type:", lineType);
-
-        const targetTemperature = temperatureUnit === "F" ? (temperatureInput - 32) * (5 / 9) : temperatureInput;
-
-        if (!isNaN(targetTemperature) && !isNaN(targetCarbonationLevel)) {
-            const pressureBAR = await calculatePressure(targetTemperature, targetCarbonationLevel);
-            const carbonationPressurePSI = pressureBAR * 14.5038;
-
-            if (pressureBAR === "Invalid temperature range" || pressureBAR === "Invalid carbonation level") {
-                document.getElementById("result").textContent = pressureBAR;
-                document.getElementById("dispenseResult").textContent = ""; // Clear dispense result if invalid
-            } else {
-                document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
-
-                // Calculate dispense pressure if line run, rise, and type are provided
-                if (lineRun !== null && lineRise !== null && lineType) {
-                    const dispensePressure = calculateDispensePressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit);
-                    document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
-                } else {
-                    document.getElementById("dispenseResult").textContent = ""; // Clear if not all fields are filled
-                }
-            }
-        } else {
-            document.getElementById("result").textContent = "Please enter all required values.";
-            document.getElementById("dispenseResult").textContent = ""; // Clear dispense result if invalid
+        if (!carbonationSelection) {
+            showError("carbonationError", "Please select a carbonation level.");
+            return;
         }
+
+        const targetCarbonation = carbonationSelection.value === "custom" 
+            ? parseFloat(document.getElementById("customValue").value) 
+            : parseFloat(carbonationSelection.value);
+
+        if (isNaN(targetCarbonation)) {
+            showError("carbonationError", "Enter a valid carbonation level.");
+            return;
+        }
+
+        hideError("carbonationError");
+
+        const convertedTemperature = temperatureUnit === "F"
+            ? (temperatureInput - 32) * (5 / 9)
+            : temperatureInput;
+
+        if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
+            showError("temperatureError", "Enter a temperature between 0°C and 30°C.");
+            return;
+        }
+
+        hideError("temperatureError");
+
+        calculateCarbonationPressure(convertedTemperature, targetCarbonation);
     });
 
-    async function calculatePressure(targetTemperature, targetCarbonationLevel) {
-        console.log("Target Temperature (Celsius):", targetTemperature);
-        console.log("Target Carbonation Level:", targetCarbonationLevel);
-
+    function calculateCarbonationPressure(temperature, carbonationLevel) {
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
-        let lowerTemp = null;
-        let upperTemp = null;
 
-        for (let i = 0; i < temperatures.length; i++) {
-            if (temperatures[i] <= targetTemperature) lowerTemp = temperatures[i];
-            if (temperatures[i] >= targetTemperature) {
-                upperTemp = temperatures[i];
-                break;
-            }
+        let lowerTemp = temperatures.find((t) => t <= temperature);
+        let upperTemp = temperatures.find((t) => t >= temperature);
+
+        if (lowerTemp === undefined || upperTemp === undefined) {
+            document.getElementById("result").textContent = "Invalid temperature range.";
+            return;
         }
 
-        console.log("Lower Temperature:", lowerTemp);
-        console.log("Upper Temperature:", upperTemp);
+        const lowerPressure = carbonationData[lowerTemp]?.[carbonationLevel];
+        const upperPressure = carbonationData[upperTemp]?.[carbonationLevel];
 
-        if (lowerTemp === null || upperTemp === null) {
-            console.log("Invalid temperature range detected.");
-            return "Invalid temperature range";
+        if (lowerPressure === undefined || upperPressure === undefined) {
+            document.getElementById("result").textContent = "Invalid carbonation level.";
+            return;
         }
 
-        const lowerPressure = getPressureAtLevel(carbonationData[lowerTemp], targetCarbonationLevel);
-        const upperPressure = getPressureAtLevel(carbonationData[upperTemp], targetCarbonationLevel);
-
-        console.log("Lower Pressure:", lowerPressure);
-        console.log("Upper Pressure:", upperPressure);
-
-        if (lowerPressure === null || upperPressure === null) {
-            console.log("Invalid carbonation level detected.");
-            return "Invalid carbonation level";
-        }
-
-        if (lowerTemp === upperTemp && lowerPressure === upperPressure) {
-            console.log("Exact match found. Returning exact pressure:", lowerPressure);
-            return lowerPressure;
-        }
-
-        const interpolatedPressure = lowerPressure + ((targetTemperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        console.log("Final Interpolated Pressure:", interpolatedPressure);
-        return interpolatedPressure;
+        const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
+        document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR`;
     }
 
-    function getPressureAtLevel(pressureData, targetLevel) {
-        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-        console.log("Available Carbonation Levels for Current Temperature:", levels);
-
-        let lowerLevel = null;
-        let upperLevel = null;
-
-        for (let i = 0; i < levels.length; i++) {
-            if (levels[i] <= targetLevel) lowerLevel = levels[i];
-            if (levels[i] >= targetLevel) {
-                upperLevel = levels[i];
-                break;
-            }
-        }
-
-        console.log("Lower Carbonation Level:", lowerLevel);
-        console.log("Upper Carbonation Level:", upperLevel);
-
-        if (lowerLevel === null || upperLevel === null) {
-            console.log("Out of range for carbonation level");
-            return null;
-        }
-
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
-        console.log("Lower Pressure for Level:", lowerPressure);
-        console.log("Upper Pressure for Level:", upperPressure);
-
-        if (lowerLevel !== upperLevel) {
-            const interpolatedPressure = lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
-            console.log("Interpolated Pressure for Carbonation Level:", interpolatedPressure);
-            return interpolatedPressure;
-        }
-
-        return lowerPressure;
+    function showError(elementId, message) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.style.display = "inline";
     }
 
-    function calculateDispensePressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit) {
-        // Placeholder values for line resistance based on line type
-        const lineResistances = {
-            "3/16 Vinyl": 3,
-            "1/4 Vinyl": 0.85,
-            "5/16 Vinyl": 0.4,
-            "3/8 Vinyl": 0.13,
-            "1/2 Vinyl": 0.025,
-            "3/16 Polyethylene": 2.2,
-            "1/4 Polyethylene": 0.5,
-            "3/8 Stainless Steel": 0.2,
-            "5/16 Stainless Steel": 0.5,
-            "1/4 Stainless Steel": 2
-        };
-
-        const resistance = lineResistances[lineType] || 0;
-        const runInFeet = lineRunUnit === "m" ? lineRun / 0.305 : lineRun;
-        const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.305 : lineRise;
-
-        const dispensePressure = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-        console.log("Calculated Dispense Pressure:", dispensePressure);
-        return dispensePressure;
+    function hideError(elementId) {
+        const element = document.getElementById(elementId);
+        element.style.display = "none";
     }
-
-    function validateTemperatureInput() {
-        const temperatureInput = document.getElementById("temperature").value;
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const temperatureError = document.getElementById("temperatureError");
-
-        // Convert the input to Celsius if the user enters Fahrenheit
-        const convertedTemperature =
-            temperatureUnit === "F"
-                ? (parseFloat(temperatureInput) - 32) * (5 / 9)
-                : parseFloat(temperatureInput);
-
-        const temperatures = Object.keys(carbonationData).map(Number);
-        const minTemp = Math.min(...temperatures);
-        const maxTemp = Math.max(...temperatures);
-
-        // Validate input
-        if (isNaN(convertedTemperature) || convertedTemperature < minTemp || convertedTemperature > maxTemp) {
-            temperatureError.style.display = "inline";
-            temperatureError.textContent = `Please enter a temperature between ${minTemp}°C and ${maxTemp}°C.`;
-            return false;
-        }
-
-        // Hide the error if valid
-        temperatureError.style.display = "none";
-        return true;
-    }
-
-    document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
-    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
 });
