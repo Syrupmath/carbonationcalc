@@ -51,40 +51,51 @@
     <small id="temperatureError" class="error-message" style="color: red; display: none;">Please enter a valid temperature between X and Y.</small>
 
     <!-- Step 3: Enter Line Rise and Run -->
-    <h2>Step 3: Enter the Rise and Run of Your Line (Optional)</h2>
-    <form id="lineForm">
-        <label for="lineRise">Line Rise:</label>
-        <input type="number" id="lineRise" name="lineRise" placeholder="Enter rise distance">
-        <select id="lineRiseUnit" name="lineRiseUnit">
-            <option value="ft">Feet</option>
-            <option value="m">Meters</option>
-        </select>
-        <br>
-        <label for="lineRun">Line Run:</label>
-        <input type="number" id="lineRun" name="lineRun" placeholder="Enter run distance">
-        <select id="lineRunUnit" name="lineRunUnit">
-            <option value="ft">Feet</option>
-            <option value="m">Meters</option>
-        </select>
-    </form>
+    <h2>Step 3: Calculate Dispensing Pressure (Optional)</h2>
+    <p>
+        Enter the following details to calculate the dispensing pressure.
+        If left empty, dispensing pressure will not be calculated.
+    </p>
 
-    <!-- Step 4: Choose Line Type and Diameter -->
-    <h2>Step 4: Choose Line Type and Diameter (Optional)</h2>
-    <label for="lineType">Line Type and Diameter:</label>
-    <select id="lineType" name="lineType">
-        <option value="3/16 Vinyl">3/16" Vinyl</option>
-        <option value="1/4 Vinyl">1/4" Vinyl</option>
-        <option value="5/16 Vinyl">5/16" Vinyl</option>
-        <option value="3/8 Vinyl">3/8" Vinyl</option>
-        <option value="1/2 Vinyl">1/2" Vinyl</option>
-        <option value="3/16 Polyethylene">3/16" Polyethylene</option>
-        <option value="1/4 Polyethylene">1/4" Polyethylene</option>
-        <option value="3/8 Stainless Steel">3/8" Stainless Steel</option>
-        <option value="5/16 Stainless Steel">5/16" Stainless Steel</option>
-        <option value="1/4 Stainless Steel">1/4" Stainless Steel</option>
+    <label for="lineType">Line Type:</label>
+    <select id="lineType">
+        <option value="">Select Line Type</option>
+        <option value="3/16 Vinyl">3/16 Vinyl</option>
+        <option value="1/4 Vinyl">1/4 Vinyl</option>
+        <option value="5/16 Vinyl">5/16 Vinyl</option>
+        <option value="3/8 Vinyl">3/8 Vinyl</option>
+        <option value="1/2 Vinyl">1/2 Vinyl</option>
+        <option value="3/16 Polyethylene">3/16 Polyethylene</option>
+        <option value="1/4 Polyethylene">1/4 Polyethylene</option>
+        <option value="3/8 Stainless Steel">3/8 Stainless Steel</option>
+        <option value="5/16 Stainless Steel">5/16 Stainless Steel</option>
+        <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
     </select>
 
-    <small id="lineError" class="error-message" style="color: red; display: none;">Please fill out all required fields for dispensing.</small>
+    <label for="lineRun">Line Run:</label>
+    <input type="number" id="lineRun" placeholder="Enter line run (e.g., 10)">
+
+    <label for="lineRunUnit">Line Run Unit:</label>
+    <select id="lineRunUnit">
+        <option value="">Select Unit</option>
+        <option value="ft">Feet</option>
+        <option value="m">Meters</option>
+    </select>
+
+    <label for="lineRise">Line Rise:</label>
+    <input type="number" id="lineRise" placeholder="Enter line rise (e.g., 5)">
+
+    <label for="lineRiseUnit">Line Rise Unit:</label>
+    <select id="lineRiseUnit">
+        <option value="">Select Unit</option>
+        <option value="ft">Feet</option>
+        <option value="m">Meters</option>
+    </select>
+
+    <!-- Error Message Placeholder -->
+    <small id="lineError" class="error-message" style="color: red; display: none;">
+        Please fill out all fields for dispensing pressure calculation.
+    </small>
 
     <!-- Calculate Button and Result Display -->
     <div>
