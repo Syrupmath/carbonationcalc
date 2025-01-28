@@ -66,10 +66,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const lowerPressure = carbonationData[lowerTemp]?.[carbonationLevel];
-        const upperPressure = carbonationData[upperTemp]?.[carbonationLevel];
+        const lowerPressureData = carbonationData[lowerTemp];
+        const upperPressureData = carbonationData[upperTemp];
 
-        if (lowerPressure === undefined || upperPressure === undefined) {
+        const lowerPressure = interpolateCarbonationLevel(lowerPressureData, carbonationLevel);
+        const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
+
+        if (lowerPressure === null || upperPressure === null) {
             document.getElementById("result").textContent = "Invalid carbonation level.";
             return;
         }
@@ -78,6 +81,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         const pressurePSI = interpolatedPressure * 14.5038;
 
         document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`;
+    }
+
+    function interpolateCarbonationLevel(pressureData, targetLevel) {
+        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
+
+        let lowerLevel = levels.find((l) => l <= targetLevel);
+        let upperLevel = levels.find((l) => l >= targetLevel);
+
+        if (lowerLevel === undefined || upperLevel === undefined) {
+            return null;
+        }
+
+        const lowerPressure = pressureData[lowerLevel];
+        const upperPressure = pressureData[upperLevel];
+
+        if (lowerLevel === upperLevel) {
+            return lowerPressure;
+        }
+
+        return lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
     }
 
     function showError(elementId, message) {
