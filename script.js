@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const validationResults = [
             validateCarbonationSelection(),
-            validateTemperatureInput()
+            validateTemperatureInput(),
+            validateDispensingFields()
         ];
 
         // Stop calculation if any validation fails
@@ -175,52 +176,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.305 : lineRise;
 
         const dispensePressure = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-        console.log("Calculated Dispense Pressure:", dispensePressure);
-        return dispensePressure;
-    }
-
-    function validateTemperatureInput() {
-        const temperatureInput = document.getElementById("temperature").value;
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const temperatureError = document.getElementById("temperatureError");
-
-        // Convert the input to Celsius if the user enters Fahrenheit
-        const convertedTemperature =
-            temperatureUnit === "F"
-                ? (parseFloat(temperatureInput) - 32) * (5 / 9)
-                : parseFloat(temperatureInput);
-
-        const temperatures = Object.keys(carbonationData).map(Number);
-        const minTemp = Math.min(...temperatures);
-        const maxTemp = Math.max(...temperatures);
-
-        // Validate input
-        if (isNaN(convertedTemperature) || convertedTemperature < minTemp || convertedTemperature > maxTemp) {
-            temperatureError.style.display = "inline";
-            temperatureError.textContent = `Please enter a temperature between ${minTemp}°C and ${maxTemp}°C.`;
-            return false;
-        }
-
-        // Hide the error if valid
-        temperatureError.style.display = "none";
-        return true;
-    }
-
-    function validateCarbonationSelection() {
-        const selectedOption = document.querySelector('input[name="carbonation"]:checked');
-        const carbonationError = document.getElementById("carbonationError");
-
-        if (!selectedOption) {
-            carbonationError.style.display = "inline";
-            carbonationError.textContent = "Please select a carbonation level.";
-            return false;
-        }
-
-        // Hide the error if valid
-        carbonationError.style.display = "none";
-        return true;
-    }
-
-    document.getElementById("temperature").addEventListener("blur", validateTemperatureInput);
-    document.getElementById("temperatureUnit").addEventListener("change", validateTemperatureInput);
-});
+        console.log("Calculated Dispense
