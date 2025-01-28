@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const validationResults = [
             validateCarbonationSelection(),
             validateTemperatureInput(),
-            validateDispensingFields()
+            validateDispensingFields() // Validate Step 3
         ];
 
         // Stop calculation if any validation fails
@@ -60,12 +60,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else {
                 document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${pressureBAR.toFixed(2)} BAR / ${carbonationPressurePSI.toFixed(2)} PSI`;
 
-                // Calculate dispense pressure if line run, rise, and type are provided
-                if (lineRun !== null && lineRise !== null && lineType) {
+                // Calculate dispense pressure if all dispensing fields are provided
+                if (lineRun !== null && lineRise !== null && lineType && lineRunUnit && lineRiseUnit) {
                     const dispensePressure = calculateDispensePressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit);
                     document.getElementById("dispenseResult").textContent = `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`;
                 } else {
-                    document.getElementById("dispenseResult").textContent = ""; // Clear if not all fields are filled
+                    document.getElementById("dispenseResult").textContent = "Dispensing pressure not calculated (optional fields incomplete).";
                 }
             }
         } else {
@@ -176,4 +176,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.305 : lineRise;
 
         const dispensePressure = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-        console.log("Calculated Dispense
+        console.log("Calculated Dispense Pressure:", dispensePressure);
+        return dispensePressure;
+    }
+
+    function validateTemperatureInput() {
+        const temperatureInput = document.getElementById("temperature").value;
+        const temperatureUnit = document.getElementById("temperatureUnit").value;
+        const temperatureError = document.getElementById("temperature
