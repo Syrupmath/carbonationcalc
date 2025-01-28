@@ -75,7 +75,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR`;
+        const pressurePSI = interpolatedPressure * 14.5038;
+
+        document.getElementById("result").textContent = `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`;
     }
 
     function showError(elementId, message) {
