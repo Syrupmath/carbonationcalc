@@ -13,12 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
-    // Automatically select the "Custom" radio button when the custom input field gains focus
-    document.getElementById("customValue").addEventListener("focus", function () {
-        const customRadio = document.querySelector('input[name="carbonation"][value="custom"]');
-        customRadio.checked = true;
-    });
-
     document.getElementById("calculateButton").addEventListener("click", async () => {
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
@@ -161,4 +155,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         const resistance = lineResistances[lineType] || 0;
-        const runInFeet = lineRunUnit === "m" ? lineRun / 
+        const runInFeet = lineRunUnit === "m" ? lineRun / 0.305 : lineRun;
+        const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.305 : lineRise;
+
+        const dispensePressure = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
+        console.log("Calculated Dispense Pressure:", dispensePressure);
+        return dispensePressure;
+    }
+});
