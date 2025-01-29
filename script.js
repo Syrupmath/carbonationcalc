@@ -25,52 +25,75 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Handle calculations on button click
     document.getElementById("calculateButton").addEventListener("click", () => {
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
+        clearResult("resultContainer"); // Clear previous results
+        
+        let isValid = true;
 
+        // Step 1: Validate Carbonation Level
+        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
         if (!carbonationSelection) {
             showError("carbonationError", "Please select a carbonation level.");
-            return;
+            isValid = false;
+        } else {
+            hideError("carbonationError");
         }
 
-        const targetCarbonation = carbonationSelection.value === "custom" 
+        const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom" 
             ? parseFloat(document.getElementById("customValue").value) 
-            : parseFloat(carbonationSelection.value);
+            : parseFloat(carbonationSelection?.value);
 
-        if (isNaN(targetCarbonation)) {
+        if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
             showError("carbonationError", "Enter a valid carbonation level.");
-            return;
+            isValid = false;
         }
 
-        hideError("carbonationError");
-
+        // Step 2: Validate Temperature
+        const temperatureInput = parseFloat(document.getElementById("temperature").value);
+        const temperatureUnit = document.getElementById("temperatureUnit").value;
         const convertedTemperature = temperatureUnit === "F"
             ? (temperatureInput - 32) * (5 / 9)
             : temperatureInput;
 
         if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
             showError("temperatureError", "Enter a temperature between 0°C and 30°C.");
-            return;
+            isValid = false;
+        } else {
+            hideError("temperatureError");
         }
 
-        hideError("temperatureError");
+        // Step 3: Validate Dispensing Pressure (if any fields are filled)
+        if (step3HasInput()) {
+            const lineType = document.getElementById("lineType").value;
+            const lineRun = document.getElementById("lineRun").value;
+            const lineRise = document.getElementById("lineRise").value;
 
-        // Clear result container and calculate carbonation pressure
-        clearResult("resultContainer");
+            if (!lineType || !lineRun || !lineRise) {
+                showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
+                isValid = false;
+            } else {
+                hideError("lineError");
+            }
+        } else {
+            hideError("lineError"); // Hide error if Step 3 is empty
+        }
+
+        // If validation fails, stop here
+        if (!isValid) return;
+
+        // Proceed with calculations if everything is valid
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
-        // Only validate Step 3 if any of its fields are filled
         if (step3HasInput()) {
-            validateDispensingInputs();
-        } else {
-            hideError("lineError"); // Clear error if no Step 3 inputs are provided
+            calculateDispensingPressure(
+                document.getElementById("lineType").value,
+                parseFloat(document.getElementById("lineRun").value),
+                parseFloat(document.getElementById("lineRise").value)
+            );
         }
     });
 
     function calculateCarbonationPressure(temperature, carbonationLevel) {
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
-
         let lowerTemp = temperatures.find((t) => t <= temperature);
         let upperTemp = temperatures.find((t) => t >= temperature);
 
@@ -102,35 +125,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function interpolateCarbonationLevel(pressureData, targetLevel) {
         const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-
         let lowerLevel = levels.find((l) => l <= targetLevel);
         let upperLevel = levels.find((l) => l >= targetLevel);
 
-        if (lowerLevel === undefined || upperLevel === undefined) {
-            return null;
-        }
+        if (lowerLevel === undefined || upperLevel === undefined) return null;
 
         const lowerPressure = pressureData[lowerLevel];
         const upperPressure = pressureData[upperLevel];
 
-        if (lowerLevel === upperLevel) {
-            return lowerPressure;
-        }
-
-        return lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
-    }
-
-    function validateDispensingInputs() {
-        const lineType = document.getElementById("lineType").value;
-        const lineRun = document.getElementById("lineRun").value;
-        const lineRise = document.getElementById("lineRise").value;
-
-        if (!lineType || !lineRun || !lineRise) {
-            showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
-        } else {
-            hideError("lineError");
-            calculateDispensingPressure(lineType, parseFloat(lineRun), parseFloat(lineRise));
-        }
+        return lowerLevel === upperLevel
+            ? lowerPressure
+            : lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
     }
 
     function calculateDispensingPressure(lineType, lineRun, lineRise) {
@@ -158,32 +163,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function step3HasInput() {
-        const lineType = document.getElementById("lineType").value;
-        const lineRun = document.getElementById("lineRun").value;
-        const lineRise = document.getElementById("lineRise").value;
-
-        return lineType || lineRun || lineRise; // Returns true if any field is filled
+        return document.getElementById("lineType").value ||
+               document.getElementById("lineRun").value ||
+               document.getElementById("lineRise").value;
     }
 
     function displayResult(resultId, message, success) {
         const container = document.getElementById("resultContainer");
-        let resultDiv = document.getElementById(resultId);
-
-        if (!resultDiv) {
-            resultDiv = document.createElement("div");
-            resultDiv.id = resultId;
-            container.appendChild(resultDiv);
-        }
-
+        let resultDiv = document.getElementById(resultId) || document.createElement("div");
+        resultDiv.id = resultId;
         resultDiv.style.border = success ? "2px solid green" : "2px solid red";
         resultDiv.style.padding = "10px";
         resultDiv.style.marginTop = "10px";
         resultDiv.textContent = message;
+        container.appendChild(resultDiv);
     }
 
     function clearResult(containerId) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
+        document.getElementById(containerId).innerHTML = "";
     }
 
     function showError(elementId, message) {
@@ -193,7 +190,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function hideError(elementId) {
-        const element = document.getElementById(elementId);
-        element.style.display = "none";
+        document.getElementById(elementId).style.display = "none";
     }
 });
