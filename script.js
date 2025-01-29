@@ -1,9 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // Hide all error messages on page load
-    hideError("carbonationError");
-    hideError("temperatureError");
-    hideError("lineError");
-
     let carbonationData;
 
     // Load carbonation data
@@ -61,75 +56,99 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         hideError("temperatureError");
 
-        clearResult("carbonationResult");
+        clearResult("resultContainer");
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
         if (step3HasInput()) {
             validateDispensingInputs();
         } else {
-            clearResult("dispenseResult");
             hideError("lineError");
+            clearResult("dispenseResult");
         }
     });
+
+    function calculateCarbonationPressure(temperature, carbonationLevel) {
+        const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
+        let lowerTemp = temperatures.find((t) => t <= temperature);
+        let upperTemp = temperatures.find((t) => t >= temperature);
+
+        if (lowerTemp === undefined || upperTemp === undefined) {
+            displayResult("carbonationResult", "Invalid temperature range.", false);
+            return;
+        }
+
+        const lowerPressureData = carbonationData[lowerTemp];
+        const upperPressureData = carbonationData[upperTemp];
+        const lowerPressure = interpolateCarbonationLevel(lowerPressureData, carbonationLevel);
+        const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
+
+        if (lowerPressure === null || upperPressure === null) {
+            displayResult("carbonationResult", "Invalid carbonation level.", false);
+            return;
+        }
+
+        const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
+        const pressurePSI = interpolatedPressure * 14.5038;
+
+        displayResult("carbonationResult", `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`, true);
+    }
 
     function validateDispensingInputs() {
         const lineType = document.getElementById("lineType").value;
         const lineRun = document.getElementById("lineRun").value;
         const lineRise = document.getElementById("lineRise").value;
 
-        const hasInput = lineType || lineRun || lineRise;
-        const allFilled = lineType && lineRun && lineRise;
-
-        if (hasInput && !allFilled) {
+        if (!lineType || !lineRun || !lineRise) {
             showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
-            return false;
+            return;
         }
 
         hideError("lineError");
+        calculateDispensingPressure(lineType, parseFloat(lineRun), parseFloat(lineRise));
+    }
 
-        if (allFilled) {
-            calculateDispensingPressure(lineType, parseFloat(lineRun), parseFloat(lineRise));
-        }
+    function calculateDispensingPressure(lineType, lineRun, lineRise) {
+        const lineResistances = {
+            "3/16 Vinyl": 3,
+            "1/4 Vinyl": 0.85,
+            "5/16 Vinyl": 0.4,
+        };
+
+        const resistance = lineResistances[lineType] || 0;
+        const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
+
+        displayResult("dispenseResult", `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`, true);
     }
 
     function displayResult(resultId, message, success) {
-        const resultDiv = document.getElementById(resultId);
-        if (!resultDiv) return;
+        const container = document.getElementById("resultContainer");
+        let resultDiv = document.getElementById(resultId);
 
-        resultDiv.className = success ? "alert alert-success mt-3" : "alert alert-danger mt-3";
+        if (!resultDiv) {
+            resultDiv = document.createElement("div");
+            resultDiv.id = resultId;
+            container.appendChild(resultDiv);
+        }
+
+        resultDiv.style.border = success ? "2px solid green" : "2px solid red";
+        resultDiv.style.padding = "10px";
+        resultDiv.style.marginTop = "10px";
         resultDiv.textContent = message;
-        resultDiv.classList.remove("d-none");
     }
 
-    function clearResult(resultId) {
-        const resultDiv = document.getElementById(resultId);
-        if (resultDiv) {
-            resultDiv.textContent = "";
-        }
+    function clearResult(containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
     }
 
     function showError(elementId, message) {
         const element = document.getElementById(elementId);
-        if (element) {
-            element.textContent = message;
-            element.classList.remove("d-none");
-            element.classList.add("d-block");
-        }
+        element.textContent = message;
+        element.style.display = "inline";
     }
 
     function hideError(elementId) {
         const element = document.getElementById(elementId);
-        if (element) {
-            element.textContent = "";
-            element.classList.add("d-none");
-            element.classList.remove("d-block");
-        }
-    }
-
-    function step3HasInput() {
-        const lineType = document.getElementById("lineType").value;
-        const lineRun = document.getElementById("lineRun").value;
-        const lineRise = document.getElementById("lineRise").value;
-        return lineType || lineRun || lineRise;
+        element.style.display = "none";
     }
 });
