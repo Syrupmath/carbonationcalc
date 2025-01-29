@@ -71,40 +71,47 @@
 </div>
 
     <!-- Step 3: Calculate Dispensing Pressure (Optional) -->
-    <h2>Step 3: Calculate Dispensing Pressure (Optional)</h2>
+<div class="col-md-6">
+    <h2>Step 3: Dispensing Pressure (Optional)</h2>
     <p>If you're serving your carbonated beverage on draft, enter the following details to calculate the dispensing pressure. If left empty, dispensing pressure will not be calculated.</p>
 
-    <label for="lineType">Line Type:</label>
-    <select id="lineType">
-        <option value="">Select Line Type</option>
-        <option value="3/16 Vinyl">3/16 Vinyl</option>
-        <option value="1/4 Vinyl">1/4 Vinyl</option>
-        <option value="5/16 Vinyl">5/16 Vinyl</option>
-        <option value="3/8 Vinyl">3/8 Vinyl</option>
-        <option value="1/2 Vinyl">1/2 Vinyl</option>
-        <option value="3/16 Polyethylene">3/16 Polyethylene</option>
-        <option value="1/4 Polyethylene">1/4 Polyethylene</option>
-        <option value="3/8 Stainless Steel">3/8 Stainless Steel</option>
-        <option value="5/16 Stainless Steel">5/16 Stainless Steel</option>
-        <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
-    </select><br>
+    <div class="mb-3">
+        <label for="lineType" class="form-label">Line Type:</label>
+        <select id="lineType" class="form-select">
+            <option value="">Select Line Type</option>
+            <option value="3/16 Vinyl">3/16 Vinyl</option>
+            <option value="1/4 Vinyl">1/4 Vinyl</option>
+            <option value="5/16 Vinyl">5/16 Vinyl</option>
+            <option value="3/8 Vinyl">3/8 Vinyl</option>
+            <option value="1/2 Vinyl">1/2 Vinyl</option>
+            <option value="3/16 Polyethylene">3/16 Polyethylene</option>
+            <option value="1/4 Polyethylene">1/4 Polyethylene</option>
+            <option value="3/8 Stainless Steel">3/8 Stainless Steel</option>
+            <option value="5/16 Stainless Steel">5/16 Stainless Steel</option>
+            <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
+        </select>
+    </div>
 
-    <label for="lineRun">Line Run:</label>
-    <input type="number" id="lineRun" placeholder="Enter line run (e.g., 10)">
-    <select id="lineRunUnit">
-        <option value="ft">Feet</option>
-        <option value="m">Meters</option>
-    </select><br>
+    <div class="mb-3">
+        <label for="lineRun" class="form-label">Line Run:</label>
+        <input type="number" id="lineRun" class="form-control" placeholder="Enter line run (e.g., 10)">
+        <select id="lineRunUnit" class="form-select mt-2">
+            <option value="ft">Feet</option>
+            <option value="m">Meters</option>
+        </select>
+    </div>
 
-    <label for="lineRise">Line Rise:</label>
-    <input type="number" id="lineRise" placeholder="Enter line rise (e.g., 5)">
-    <select id="lineRiseUnit">
-        <option value="ft">Feet</option>
-        <option value="m">Meters</option>
-    </select><br>
+    <div class="mb-3">
+        <label for="lineRise" class="form-label">Line Rise:</label>
+        <input type="number" id="lineRise" class="form-control" placeholder="Enter line rise (e.g., 5)">
+        <select id="lineRiseUnit" class="form-select mt-2">
+            <option value="ft">Feet</option>
+            <option value="m">Meters</option>
+        </select>
+    </div>
 
-    <small id="lineError" style="color: red; display: none;">Please fill out all required fields for dispensing pressure calculation.</small>
-
+    <small id="lineError" class="text-danger d-none">Please fill out all required fields for dispensing pressure calculation.</small>
+</div>
     <!-- Calculate Button -->
     <div>
         <button id="calculateButton">Calculate</button>
