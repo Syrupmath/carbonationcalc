@@ -53,25 +53,6 @@
                         <small class="d-block text-muted">Bursting with bubbles, elegant and celebratory - around 9 g/L CO₂</small>
                     </div>
 
-                    <!-- RESTORED OPTIONS -->
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="carbonation" value="2.5" id="lowCarbonation">
-                        <label class="form-check-label" for="lowCarbonation">Lightly Carbonated</label>
-                        <small class="d-block text-muted">A subtle sparkle - around 2.5 g/L CO₂</small>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="carbonation" value="4" id="mediumCarbonation">
-                        <label class="form-check-label" for="mediumCarbonation">Moderate Carbonation</label>
-                        <small class="d-block text-muted">A balanced fizz - around 4 g/L CO₂</small>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="carbonation" value="10.5" id="highCarbonation">
-                        <label class="form-check-label" for="highCarbonation">Highly Carbonated</label>
-                        <small class="d-block text-muted">Very effervescent - around 10.5 g/L CO₂</small>
-                    </div>
-
                     <div class="input-group mt-2">
                         <span class="input-group-text">
                             <input class="form-check-input mt-0" type="radio" name="carbonation" value="custom" id="customRadio">
@@ -85,10 +66,10 @@
             </div>
         </div>
 
-        <!-- Step 2: Temperature (Unchanged) -->
+        <!-- Step 2: Enter Temperature -->
         <div class="card mb-4">
             <div class="card-body">
-                <h2 class="h4">Step 2: Enter Temperature</h2>
+                <h2 class="h4">Step 2: Enter the Temperature of Your Liquid</h2>
                 <div class="input-group">
                     <input type="number" id="temperature" class="form-control" placeholder="Enter temperature">
                     <select id="temperatureUnit" class="form-select">
@@ -100,24 +81,42 @@
             </div>
         </div>
 
-        <!-- Step 3: Dispensing Pressure (Unchanged) -->
+        <!-- Step 3: Calculate Dispensing Pressure (Fully Restored) -->
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="h4">Step 3: Calculate Dispensing Pressure (Optional)</h2>
-                <div class="input-group mb-3">
+
+                <label for="lineType" class="form-label">Line Type:</label>
+                <select id="lineType" class="form-select">
+                    <option value="">Select Line Type</option>
+                    <option value="3/16 Vinyl">3/16 Vinyl</option>
+                    <option value="1/4 Vinyl">1/4 Vinyl</option>
+                    <option value="5/16 Vinyl">5/16 Vinyl</option>
+                    <option value="3/8 Vinyl">3/8 Vinyl</option>
+                    <option value="1/2 Vinyl">1/2 Vinyl</option>
+                    <option value="3/16 Polyethylene">3/16 Polyethylene</option>
+                    <option value="1/4 Polyethylene">1/4 Polyethylene</option>
+                    <option value="3/8 Stainless Steel">3/8 Stainless Steel</option>
+                    <option value="5/16 Stainless Steel">5/16 Stainless Steel</option>
+                    <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
+                </select>
+
+                <div class="input-group mt-3">
                     <input type="number" id="lineRun" class="form-control" placeholder="Enter line run">
                     <select id="lineRunUnit" class="form-select">
                         <option value="ft">Feet</option>
                         <option value="m">Meters</option>
                     </select>
                 </div>
-                <div class="input-group">
+
+                <div class="input-group mt-3">
                     <input type="number" id="lineRise" class="form-control" placeholder="Enter line rise">
                     <select id="lineRiseUnit" class="form-select">
                         <option value="ft">Feet</option>
                         <option value="m">Meters</option>
                     </select>
                 </div>
+
                 <small id="lineError" class="text-danger" style="display: none;">Please fill out all required fields for dispensing pressure calculation.</small>
             </div>
         </div>
