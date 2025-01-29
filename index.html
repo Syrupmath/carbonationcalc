@@ -4,126 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbonation Calculator</title>
+    <!-- Bootstrap Placeholder (Can be Activated Later) -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 </head>
 <body>
-    <h1>Carbonation and Draft Cocktail Calculator</h1>
-    <p>This simple tool calculates the pressure needed to carbonate beverages such as cocktails, sodas, or water to your desired style. It can also be used to calculate dispense pressure for kegged beverages served on draft.</p>
+    <div class="container mt-4">
+        <h1 class="text-center">Carbonation and Draft Cocktail Calculator</h1>
+        <p class="text-center">Calculate carbonation and dispensing pressure for beverages.</p>
 
-    <!-- Step 1: Select Carbonation Level -->
-    <div class="col-md-6">
-        <h2>Step 1: Select Carbonation Level</h2>
-        <p>Choose a carbonation level or enter a custom value.</p>
-        <form id="carbonationForm" class="mb-3">
-            <div class="form-check mb-2">
-                <input type="radio" name="carbonation" value="5" class="form-check-input" id="lagerRadio">
-                <label class="form-check-label" for="lagerRadio">American Lager</label>
-                <small class="text-muted d-block">Light and refreshing with a gentle fizz - around 5 g/L CO₂</small>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Step 1: Select Carbonation Level</h2>
+                <p>Choose a carbonation level or enter a custom value.</p>
+                <form id="carbonationForm" class="mb-3">
+                    <div class="form-check mb-2">
+                        <input type="radio" name="carbonation" value="5" class="form-check-input" id="lagerRadio">
+                        <label class="form-check-label" for="lagerRadio">American Lager</label>
+                        <small class="text-muted d-block">Light and refreshing with a gentle fizz - around 5 g/L CO₂</small>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="radio" name="carbonation" value="6" class="form-check-input" id="sparklingRadio">
+                        <label class="form-check-label" for="sparklingRadio">Italian Sparkling Water</label>
+                        <small class="text-muted d-block">Crisp and effervescent - around 6 g/L CO₂</small>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="radio" name="carbonation" value="7.9" class="form-check-input" id="colaRadio">
+                        <label class="form-check-label" for="colaRadio">Bottled Cola</label>
+                        <small class="text-muted d-block">Bold and bubbly, with a satisfying fizz - around 7.9 g/L CO₂</small>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="radio" name="carbonation" value="8.5" class="form-check-input" id="tonicRadio">
+                        <label class="form-check-label" for="tonicRadio">Tonic Water</label>
+                        <small class="text-muted d-block">Sharp and zesty, with a sparkling kick - around 8.5 g/L CO₂</small>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="radio" name="carbonation" value="9" class="form-check-input" id="champagneRadio">
+                        <label class="form-check-label" for="champagneRadio">French Champagne</label>
+                        <small class="text-muted d-block">Bursting with bubbles, elegant and celebratory - around 9 g/L CO₂</small>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" name="carbonation" value="custom" class="form-check-input" id="customRadio">
+                        <label class="form-check-label" for="customRadio">Custom</label>
+                        <input type="number" id="customValue" class="form-control mt-2" placeholder="Enter custom g/L">
+                    </div>
+                    <small id="carbonationError" class="text-danger d-none">Please select a carbonation level.</small>
+                </form>
             </div>
-            <div class="form-check mb-2">
-                <input type="radio" name="carbonation" value="6" class="form-check-input" id="sparklingRadio">
-                <label class="form-check-label" for="sparklingRadio">Italian Sparkling Water</label>
-                <small class="text-muted d-block">Crisp and effervescent - around 6 g/L CO₂</small>
-            </div>
-            <div class="form-check mb-2">
-                <input type="radio" name="carbonation" value="7.9" class="form-check-input" id="colaRadio">
-                <label class="form-check-label" for="colaRadio">Bottled Cola</label>
-                <small class="text-muted d-block">Bold and bubbly, with a satisfying fizz - around 7.9 g/L CO₂</small>
-            </div>
-            <div class="form-check mb-2">
-                <input type="radio" name="carbonation" value="8.5" class="form-check-input" id="tonicRadio">
-                <label class="form-check-label" for="tonicRadio">Tonic Water</label>
-                <small class="text-muted d-block">Sharp and zesty, with a sparkling kick - around 8.5 g/L CO₂</small>
-            </div>
-            <div class="form-check mb-2">
-                <input type="radio" name="carbonation" value="9" class="form-check-input" id="champagneRadio">
-                <label class="form-check-label" for="champagneRadio">French Champagne</label>
-                <small class="text-muted d-block">Bursting with bubbles, elegant and celebratory - around 9 g/L CO₂</small>
-            </div>
-            <div class="form-check">
-                <input type="radio" name="carbonation" value="custom" class="form-check-input" id="customRadio">
-                <label class="form-check-label" for="customRadio">Custom</label>
-                <input type="number" id="customValue" class="form-control mt-2" placeholder="Enter custom g/L">
-            </div>
-            <small id="carbonationError" class="text-danger d-none">Please select a carbonation level.</small>
-        </form>
-    </div>
-    
-    <!-- Step 2: Enter Temperature -->
-<div class="col-md-6">
-    <h2>Step 2: Enter Temperature</h2>
-    <p>Carbon dioxide is more soluble in colder liquids. Chill your beverage thoroughly (overnight in the refrigerator works great) and enter the temperature here.</p>
-    <p>The temperature must be between 0°C (32°F) and 30°C (86°F).</p>
 
-    <div class="mb-3">
-        <label for="temperature" class="form-label">Temperature:</label>
-        <input type="number" id="temperature" class="form-control" placeholder="Enter temperature">
-    </div>
+            <div class="col-md-6">
+                <h2>Step 2: Enter Temperature</h2>
+                <label for="temperature" class="form-label">Temperature:</label>
+                <input type="number" id="temperature" class="form-control" placeholder="Enter temperature">
+                <select id="temperatureUnit" class="form-select mt-2">
+                    <option value="C">Celsius</option>
+                    <option value="F">Fahrenheit</option>
+                </select>
+                <small id="temperatureError" class="text-danger d-none">Enter a valid temperature between 0°C and 30°C.</small>
+            </div>
+        </div>
 
-    <div class="mb-3">
-        <label for="temperatureUnit" class="form-label">Unit:</label>
-        <select id="temperatureUnit" class="form-select">
-            <option value="C">Celsius</option>
-            <option value="F">Fahrenheit</option>
-        </select>
-    </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2>Step 3: Dispensing Pressure (Optional)</h2>
+                <label for="lineType" class="form-label">Line Type:</label>
+                <select id="lineType" class="form-select">
+                    <option value="">Select Line Type</option>
+                    <option value="3/16 Vinyl">3/16 Vinyl</option>
+                    <option value="1/4 Vinyl">1/4 Vinyl</option>
+                    <option value="5/16 Vinyl">5/16 Vinyl</option>
+                </select>
+                <label for="lineRun" class="mt-2 form-label">Line Run:</label>
+                <input type="number" id="lineRun" class="form-control" placeholder="Enter line run">
+                <label for="lineRise" class="mt-2 form-label">Line Rise:</label>
+                <input type="number" id="lineRise" class="form-control" placeholder="Enter line rise">
+                <small id="lineError" class="text-danger d-none">Please fill out all required fields.</small>
+            </div>
+        </div>
 
-    <small id="temperatureError" class="text-danger d-none">Enter a valid temperature between 0°C and 30°C.</small>
-</div>
+        <div class="text-center mt-4">
+            <button id="calculateButton" class="btn btn-primary">Calculate</button>
+        </div>
 
-    <!-- Step 3: Calculate Dispensing Pressure (Optional) -->
-<div class="col-md-6">
-    <h2>Step 3: Dispensing Pressure (Optional)</h2>
-    <p>If you're serving your carbonated beverage on draft, enter the following details to calculate the dispensing pressure. If left empty, dispensing pressure will not be calculated.</p>
-
-    <div class="mb-3">
-        <label for="lineType" class="form-label">Line Type:</label>
-        <select id="lineType" class="form-select">
-            <option value="">Select Line Type</option>
-            <option value="3/16 Vinyl">3/16 Vinyl</option>
-            <option value="1/4 Vinyl">1/4 Vinyl</option>
-            <option value="5/16 Vinyl">5/16 Vinyl</option>
-            <option value="3/8 Vinyl">3/8 Vinyl</option>
-            <option value="1/2 Vinyl">1/2 Vinyl</option>
-            <option value="3/16 Polyethylene">3/16 Polyethylene</option>
-            <option value="1/4 Polyethylene">1/4 Polyethylene</option>
-            <option value="3/8 Stainless Steel">3/8 Stainless Steel</option>
-            <option value="5/16 Stainless Steel">5/16 Stainless Steel</option>
-            <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
-        </select>
+        <div id="resultContainer" class="mt-4"></div>
     </div>
 
-    <div class="mb-3">
-        <label for="lineRun" class="form-label">Line Run:</label>
-        <input type="number" id="lineRun" class="form-control" placeholder="Enter line run (e.g., 10)">
-        <select id="lineRunUnit" class="form-select mt-2">
-            <option value="ft">Feet</option>
-            <option value="m">Meters</option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label for="lineRise" class="form-label">Line Rise:</label>
-        <input type="number" id="lineRise" class="form-control" placeholder="Enter line rise (e.g., 5)">
-        <select id="lineRiseUnit" class="form-select mt-2">
-            <option value="ft">Feet</option>
-            <option value="m">Meters</option>
-        </select>
-    </div>
-
-    <small id="lineError" class="text-danger d-none">Please fill out all required fields for dispensing pressure calculation.</small>
-</div>
-    <!-- Calculate Button -->
-<div class="text-center mt-4">
-    <button id="calculateButton" class="btn btn-primary">Calculate</button>
-</div>
-
-<div id="resultContainer" class="mt-4">
-    <!-- Carbonation Result -->
-    <div id="carbonationResult" class="alert alert-success d-none mt-3"></div>
-
-    <!-- Dispense Pressure Result -->
-    <div id="dispenseResult" class="alert alert-success d-none mt-3"></div>
-</div>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
