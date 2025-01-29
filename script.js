@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Handle calculations on button click
     document.getElementById("calculateButton").addEventListener("click", () => {
+        clearResult("resultContainer");
         const temperatureInput = parseFloat(document.getElementById("temperature").value);
         const temperatureUnit = document.getElementById("temperatureUnit").value;
         const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
@@ -55,8 +56,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         hideError("temperatureError");
-
-        clearResult("resultContainer");
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
         if (step3HasInput()) {
@@ -130,10 +129,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             container.appendChild(resultDiv);
         }
 
-        resultDiv.style.border = success ? "2px solid green" : "2px solid red";
-        resultDiv.style.padding = "10px";
-        resultDiv.style.marginTop = "10px";
+        resultDiv.className = success ? "alert alert-success mt-3" : "alert alert-danger mt-3";
         resultDiv.textContent = message;
+        resultDiv.classList.remove("d-none");
     }
 
     function clearResult(containerId) {
@@ -150,5 +148,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     function hideError(elementId) {
         const element = document.getElementById(elementId);
         element.style.display = "none";
+    }
+
+    function step3HasInput() {
+        return document.getElementById("lineType").value || document.getElementById("lineRun").value || document.getElementById("lineRise").value;
     }
 });
