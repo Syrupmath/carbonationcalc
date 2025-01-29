@@ -57,14 +57,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideError("temperatureError");
 
         // Clear result container and calculate carbonation pressure
-        clearResult("resultContainer");
+        clearResult("carbonationResult");
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
         // Only validate Step 3 if any of its fields are filled
         if (step3HasInput()) {
             validateDispensingInputs();
         } else {
-            hideError("lineError"); // Clear error if no Step 3 inputs are provided
+            hideError("lineError");
         }
     });
 
@@ -93,31 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
         const pressurePSI = interpolatedPressure * 14.5038;
 
-        displayResult(
-            "carbonationResult",
-            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`,
-            true
-        );
-    }
-
-    function interpolateCarbonationLevel(pressureData, targetLevel) {
-        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-
-        let lowerLevel = levels.find((l) => l <= targetLevel);
-        let upperLevel = levels.find((l) => l >= targetLevel);
-
-        if (lowerLevel === undefined || upperLevel === undefined) {
-            return null;
-        }
-
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
-
-        if (lowerLevel === upperLevel) {
-            return lowerPressure;
-        }
-
-        return lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
+        displayResult("carbonationResult", `Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`, true);
     }
 
     function validateDispensingInputs() {
@@ -126,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const lineRise = document.getElementById("lineRise").value;
 
         if (!lineType || !lineRun || !lineRise) {
-            showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
+            showError("lineError", "Please fill out all required fields.");
         } else {
             hideError("lineError");
             calculateDispensingPressure(lineType, parseFloat(lineRun), parseFloat(lineRise));
@@ -138,62 +114,42 @@ document.addEventListener("DOMContentLoaded", async () => {
             "3/16 Vinyl": 3,
             "1/4 Vinyl": 0.85,
             "5/16 Vinyl": 0.4,
-            "3/8 Vinyl": 0.13,
-            "1/2 Vinyl": 0.025,
-            "3/16 Polyethylene": 2.2,
-            "1/4 Polyethylene": 0.5,
-            "3/8 Stainless Steel": 0.2,
-            "5/16 Stainless Steel": 0.5,
-            "1/4 Stainless Steel": 2
         };
 
         const resistance = lineResistances[lineType] || 0;
         const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
 
-        displayResult(
-            "dispenseResult",
-            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`,
-            true
-        );
+        displayResult("dispenseResult", `Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`, true);
+    }
+
+    function displayResult(resultId, message, success) {
+        const resultDiv = document.getElementById(resultId);
+        resultDiv.className = success ? "alert alert-success mt-3" : "alert alert-danger mt-3";
+        resultDiv.textContent = message;
+        resultDiv.classList.remove("d-none");
+    }
+
+    function clearResult(resultId) {
+        const resultDiv = document.getElementById(resultId);
+        resultDiv.classList.add("d-none");
+        resultDiv.textContent = "";
+    }
+
+    function showError(elementId, message) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.classList.remove("d-none");
+    }
+
+    function hideError(elementId) {
+        const element = document.getElementById(elementId);
+        element.classList.add("d-none");
     }
 
     function step3HasInput() {
         const lineType = document.getElementById("lineType").value;
         const lineRun = document.getElementById("lineRun").value;
         const lineRise = document.getElementById("lineRise").value;
-
-        return lineType || lineRun || lineRise; // Returns true if any field is filled
-    }
-
-    function displayResult(resultId, message, success) {
-        const container = document.getElementById("resultContainer");
-        let resultDiv = document.getElementById(resultId);
-
-        if (!resultDiv) {
-            resultDiv = document.createElement("div");
-            resultDiv.id = resultId;
-            container.appendChild(resultDiv);
-        }
-
-        resultDiv.style.border = success ? "2px solid green" : "2px solid red";
-        resultDiv.style.padding = "10px";
-        resultDiv.style.marginTop = "10px";
-        resultDiv.textContent = message;
-    }
-
-    function clearResult(containerId) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-    }
-
-    function showError(elementId, message) {
-        const element = document.getElementById(elementId);
-        element.textContent = message;
-        element.style.display = "inline";
-    }
-
-    function hideError(elementId) {
-        const element = document.getElementById(elementId);
-        element.style.display = "none";
+        return lineType || lineRun || lineRise;
     }
 });
