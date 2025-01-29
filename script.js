@@ -73,41 +73,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    function calculateCarbonationPressure(temperature, carbonationLevel) {
-        const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
-
-        let lowerTemp = temperatures.find((t) => t <= temperature);
-        let upperTemp = temperatures.find((t) => t >= temperature);
-
-        if (lowerTemp === undefined || upperTemp === undefined) {
-            displayResult("carbonationResult", "Invalid temperature range.", false);
-            return;
-        }
-
-        const lowerPressureData = carbonationData[lowerTemp];
-        const upperPressureData = carbonationData[upperTemp];
-
-        const lowerPressure = interpolateCarbonationLevel(lowerPressureData, carbonationLevel);
-        const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
-
-        if (lowerPressure === null || upperPressure === null) {
-            displayResult("carbonationResult", "Invalid carbonation level.", false);
-            return;
-        }
-
-        const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        const pressurePSI = interpolatedPressure * 14.5038;
-
-        displayResult("carbonationResult", `Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`, true);
-    }
-
     function validateDispensingInputs() {
         const lineType = document.getElementById("lineType").value;
         const lineRun = document.getElementById("lineRun").value;
         const lineRise = document.getElementById("lineRise").value;
 
-        const hasInput = lineType || lineRun || lineRise;
-        const allFilled = lineType && lineRun && lineRise;
+        const hasInput = lineType || lineRun || lineRise; // At least one field has input
+        const allFilled = lineType && lineRun && lineRise; // All fields are filled
 
         if (hasInput && !allFilled) {
             showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
