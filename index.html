@@ -113,13 +113,17 @@
     <small id="lineError" class="text-danger d-none">Please fill out all required fields for dispensing pressure calculation.</small>
 </div>
     <!-- Calculate Button -->
-    <div>
-        <button id="calculateButton">Calculate</button>
-    </div>
+<div class="text-center mt-4">
+    <button id="calculateButton" class="btn btn-primary">Calculate</button>
+</div>
 
-    <!-- Result Container -->
-    <div id="resultContainer"></div>
+<div id="resultContainer" class="mt-4">
+    <!-- Carbonation Result -->
+    <div id="carbonationResult" class="alert alert-success d-none mt-3"></div>
 
-    <script src="script.js"></script>
+    <!-- Dispense Pressure Result -->
+    <div id="dispenseResult" class="alert alert-success d-none mt-3"></div>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
