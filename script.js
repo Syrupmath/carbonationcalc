@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    // Hide all error messages on page load
+    hideError("carbonationError");
+    hideError("temperatureError");
+    hideError("lineError");
+
     let carbonationData;
 
     // Load carbonation data
@@ -100,17 +105,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         const lineType = document.getElementById("lineType").value;
         const lineRun = document.getElementById("lineRun").value;
         const lineRise = document.getElementById("lineRise").value;
-    
-        const hasInput = lineType || lineRun || lineRise; // At least one field has input
-        const allFilled = lineType && lineRun && lineRise; // All fields are filled
-    
+
+        const hasInput = lineType || lineRun || lineRise;
+        const allFilled = lineType && lineRun && lineRise;
+
         if (hasInput && !allFilled) {
-            showError("lineError", "Please fill out all required fields for dispensing pressure.");
+            showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
             return;
         }
-    
-        hideError("lineError"); // No error if fields are either all filled or all empty
-    
+
+        hideError("lineError");
+
         if (allFilled) {
             calculateDispensingPressure(lineType, parseFloat(lineRun), parseFloat(lineRise));
         }
@@ -144,16 +149,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function showError(elementId, message) {
         const element = document.getElementById(elementId);
-        element.textContent = message;
-        element.classList.remove("d-none");
-        element.classList.add("d-block"); // Ensure it's visible
+        if (element) {
+            element.textContent = message;
+            element.classList.remove("d-none");
+            element.classList.add("d-block");
+        }
     }
 
     function hideError(elementId) {
         const element = document.getElementById(elementId);
-        element.textContent = ""; // Clear error message
-        element.classList.add("d-none");
-        element.classList.remove("d-block"); // Hide properly
+        if (element) {
+            element.textContent = "";
+            element.classList.add("d-none");
+            element.classList.remove("d-block");
+        }
     }
 
     function step3HasInput() {
