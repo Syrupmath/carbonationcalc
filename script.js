@@ -61,14 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         hideError("temperatureError");
 
-        // Clear result container and calculate carbonation pressure
         clearResult("carbonationResult");
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
-        // Only validate Step 3 if any of its fields are filled
         if (step3HasInput()) {
             validateDispensingInputs();
         } else {
+            clearResult("dispenseResult");
             hideError("lineError");
         }
     });
@@ -78,12 +77,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         const lineRun = document.getElementById("lineRun").value;
         const lineRise = document.getElementById("lineRise").value;
 
-        const hasInput = lineType || lineRun || lineRise; // At least one field has input
-        const allFilled = lineType && lineRun && lineRise; // All fields are filled
+        const hasInput = lineType || lineRun || lineRise;
+        const allFilled = lineType && lineRun && lineRise;
 
         if (hasInput && !allFilled) {
             showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
-            return;
+            return false;
         }
 
         hideError("lineError");
@@ -93,21 +92,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    function calculateDispensingPressure(lineType, lineRun, lineRise) {
-        const lineResistances = {
-            "3/16 Vinyl": 3,
-            "1/4 Vinyl": 0.85,
-            "5/16 Vinyl": 0.4,
-        };
-
-        const resistance = lineResistances[lineType] || 0;
-        const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
-
-        displayResult("dispenseResult", `Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`, true);
-    }
-
     function displayResult(resultId, message, success) {
         const resultDiv = document.getElementById(resultId);
+        if (!resultDiv) return;
+
         resultDiv.className = success ? "alert alert-success mt-3" : "alert alert-danger mt-3";
         resultDiv.textContent = message;
         resultDiv.classList.remove("d-none");
@@ -115,8 +103,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function clearResult(resultId) {
         const resultDiv = document.getElementById(resultId);
-        resultDiv.classList.add("d-none");
-        resultDiv.textContent = "";
+        if (resultDiv) {
+            resultDiv.textContent = "";
+        }
     }
 
     function showError(elementId, message) {
