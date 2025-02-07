@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         displayResult(
             "carbonationResult",
-            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`,
+            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(1)} BAR / ${pressurePSI.toFixed(1)} PSI`,
             true
         );
     }
