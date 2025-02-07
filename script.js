@@ -155,9 +155,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const resistance = lineResistances[lineType] || 0;
         const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
 
+        const dispensePressureBAR = dispensePressure * 0.0689476;
+
         displayResult(
             "dispenseResult",
-            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`,
+            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI / ${dispensePressureBAR.toFixed(2)} BAR`,
             true
         );
     }
