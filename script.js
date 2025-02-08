@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         displayResult(
             "dispenseResult",
-            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI / ${dispensePressureBAR.toFixed(2)} BAR`,
+            `Calculated Dispense Pressure: ${dispensePressure.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
             true
         );
     }
