@@ -138,31 +138,40 @@ document.addEventListener("DOMContentLoaded", async () => {
             : lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
     }
 
-    function calculateDispensingPressure(lineType, lineRun, lineRise) {
-        const lineResistances = {
-            "3/16 Vinyl": 3,
-            "1/4 Vinyl": 0.85,
-            "5/16 Vinyl": 0.4,
-            "3/8 Vinyl": 0.13,
-            "1/2 Vinyl": 0.025,
-            "3/16 Polyethylene": 2.2,
-            "1/4 Polyethylene": 0.5,
-            "3/8 Stainless Steel": 0.2,
-            "5/16 Stainless Steel": 0.5,
-            "1/4 Stainless Steel": 2
-        };
+function calculateDispensingPressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit) {
+    // Resistance values (PSI per foot) based on line type
+    const lineResistances = {
+        "3/16 Vinyl": 3,
+        "1/4 Vinyl": 0.85,
+        "5/16 Vinyl": 0.4,
+        "3/8 Vinyl": 0.13,
+        "1/2 Vinyl": 0.025,
+        "3/16 Polyethylene": 2.2,
+        "1/4 Polyethylene": 0.5,
+        "3/8 Stainless Steel": 0.2,
+        "5/16 Stainless Steel": 0.5,
+        "1/4 Stainless Steel": 2
+    };
 
-        const resistance = lineResistances[lineType] || 0;
-        const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
+    const resistance = lineResistances[lineType] || 0;
 
-        const dispensePressureBAR = dispensePressure * 0.0689476;
+    // Unit Conversion: Convert meters to feet if needed
+    const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun; // 1 ft = 0.3048 m
+    const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
 
-        displayResult(
-            "dispenseResult",
-            `Calculated Dispense Pressure: ${dispensePressure.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
-            true
-        );
-    }
+    // Correct Formula: Includes carbonation pressure, resistance, gravity, and flow buffer
+    const dispensePressurePSI = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
+
+    // Convert PSI to BAR
+    const dispensePressureBAR = dispensePressurePSI * 0.0689476;
+
+    // Display Result in PSI and BAR
+    displayResult(
+        "dispenseResult",
+        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(2)} PSI / ${dispensePressureBAR.toFixed(2)} BAR`,
+        true
+    );
+}
 
     function step3HasInput() {
         return document.getElementById("lineType").value ||
