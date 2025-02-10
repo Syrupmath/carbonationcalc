@@ -83,13 +83,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Proceed with calculations if everything is valid
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
-        if (step3HasInput()) {
-            calculateDispensingPressure(
-                document.getElementById("lineType").value,
-                parseFloat(document.getElementById("lineRun").value),
-                parseFloat(document.getElementById("lineRise").value)
-            );
-        }
+if (step3HasInput()) {
+    const carbonationResult = document.getElementById("carbonationResult");
+    const carbonationPressureMatch = carbonationResult?.textContent.match(/([\d.]+) PSI/);
+    const carbonationPressurePSI = carbonationPressureMatch ? parseFloat(carbonationPressureMatch[1]) : 0;
+
+    calculateDispensingPressure(
+        carbonationPressurePSI,
+        parseFloat(document.getElementById("lineRun").value),
+        parseFloat(document.getElementById("lineRise").value),
+        document.getElementById("lineType").value,
+        document.getElementById("lineRunUnit").value,
+        document.getElementById("lineRiseUnit").value
+    );
+}
     });
 
     function calculateCarbonationPressure(temperature, carbonationLevel) {
