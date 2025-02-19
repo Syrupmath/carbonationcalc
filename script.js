@@ -125,7 +125,7 @@ if (step3HasInput()) {
 
         displayResult(
             "carbonationResult",
-            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(1)} BAR / ${pressurePSI.toFixed(1)} PSI`,
+            `Calculated Carbonation Pressure: ${pressurePSI.toFixed(1)} PSI / ${interpolatedPressure.toFixed(1)} BAR`,
             true
         );
     }
