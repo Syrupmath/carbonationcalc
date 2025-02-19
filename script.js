@@ -175,7 +175,7 @@ function calculateDispensingPressure(carbonationPressurePSI, lineRun, lineRise, 
     // Display Result in PSI and BAR
     displayResult(
         "dispenseResult",
-        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(2)} PSI / ${dispensePressureBAR.toFixed(2)} BAR`,
+        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
         true
     );
 }
