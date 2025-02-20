@@ -200,6 +200,7 @@ function displayResult(elementId, message, isSuccess = true) {
     if (cardElement) {
         cardElement.style.display = "block";
     }
+}
 
     function clearResult(containerId) {
         document.getElementById(containerId).innerHTML = "";
