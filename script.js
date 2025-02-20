@@ -186,21 +186,16 @@ function calculateDispensingPressure(carbonationPressurePSI, lineRun, lineRise, 
                document.getElementById("lineRise").value;
     }
 
-function displayResult(elementId, message, isSuccess = true) {
-    const resultElement = document.getElementById(elementId);
-    const cardElement = resultElement.closest(".card");
-
-    // Set the result message
-    resultElement.textContent = message;
-
-    // Update text color based on success or failure
-    resultElement.style.color = isSuccess ? "#28a745" : "#dc3545";
-
-    // Make the card visible if it was hidden
-    if (cardElement) {
-        cardElement.style.display = "block";
+    function displayResult(resultId, message, success) {
+        const container = document.getElementById("resultContainer");
+        let resultDiv = document.getElementById(resultId) || document.createElement("div");
+        resultDiv.id = resultId;
+        resultDiv.style.border = success ? "2px solid green" : "2px solid red";
+        resultDiv.style.padding = "10px";
+        resultDiv.style.marginTop = "10px";
+        resultDiv.textContent = message;
+        container.appendChild(resultDiv);
     }
-}
 
     function clearResult(containerId) {
         document.getElementById(containerId).innerHTML = "";
