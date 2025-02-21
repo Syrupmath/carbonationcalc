@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     let carbonationData;
 
-    // Load carbonation data
+    // Load carbonation data from JSON
     async function loadCarbonationData() {
         try {
             const response = await fetch("data.json");
@@ -14,36 +14,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadCarbonationData();
 
-    // Automatically select "Custom" radio on custom input focus
+    // Automatically select "Custom" radio when focusing custom input
     document.getElementById("customValue").addEventListener("focus", () => {
         document.getElementById("customRadio").checked = true;
     });
 
-    // Set default unit for Line Run and Line Rise to Meters
-    document.getElementById("lineRunUnit").value = "m";
-    document.getElementById("lineRiseUnit").value = "m";
-
-    // Handle calculations on button click
+    // Calculate button handler
     document.getElementById("calculateButton").addEventListener("click", () => {
-        clearResult("resultContainer"); // Clear previous results
-        
+        clearResult("resultContainer");
+
         let isValid = true;
 
         // Step 1: Validate Carbonation Level
         const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
         if (!carbonationSelection) {
-            showError("carbonationError", "Please select a carbonation level.");
+            showError("carbonationError");
             isValid = false;
         } else {
             hideError("carbonationError");
         }
 
-        const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom" 
-            ? parseFloat(document.getElementById("customValue").value) 
+        const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom"
+            ? parseFloat(document.getElementById("customValue").value)
             : parseFloat(carbonationSelection?.value);
 
         if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
-            showError("carbonationError", "Enter a valid carbonation level.");
+            showError("carbonationError");
             isValid = false;
         }
 
@@ -55,57 +51,50 @@ document.addEventListener("DOMContentLoaded", async () => {
             : temperatureInput;
 
         if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
-            showError("temperatureError", "Enter a temperature between 0°C and 30°C.");
+            showError("temperatureError");
             isValid = false;
         } else {
             hideError("temperatureError");
         }
 
-        // Step 3: Validate Dispensing Pressure (if any fields are filled)
+        // Step 3: Validate Dispensing Pressure (if applicable)
         if (step3HasInput()) {
             const lineType = document.getElementById("lineType").value;
             const lineRun = document.getElementById("lineRun").value;
             const lineRise = document.getElementById("lineRise").value;
 
             if (!lineType || !lineRun || !lineRise) {
-                showError("lineError", "Please fill out all required fields for dispensing pressure calculation.");
+                showError("lineError");
                 isValid = false;
             } else {
                 hideError("lineError");
             }
         } else {
-            hideError("lineError"); // Hide error if Step 3 is empty
+            hideError("lineError");
         }
 
-        // If validation fails, stop here
-        if (!isValid) return;
+        if (!isValid) return; // Stop if any validation fails
 
-        // Proceed with calculations if everything is valid
+        // Perform calculations if valid
         calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
-if (step3HasInput()) {
-    const carbonationResult = document.getElementById("carbonationResult");
-    const carbonationPressureMatch = carbonationResult?.textContent.match(/([\d.]+) PSI/);
-    const carbonationPressurePSI = carbonationPressureMatch ? parseFloat(carbonationPressureMatch[1]) : 0;
-
-    calculateDispensingPressure(
-        carbonationPressurePSI,
-        parseFloat(document.getElementById("lineRun").value),
-        parseFloat(document.getElementById("lineRise").value),
-        document.getElementById("lineType").value,
-        document.getElementById("lineRunUnit").value,
-        document.getElementById("lineRiseUnit").value
-    );
-}
+        if (step3HasInput()) {
+            calculateDispensingPressure(
+                document.getElementById("lineType").value,
+                parseFloat(document.getElementById("lineRun").value),
+                parseFloat(document.getElementById("lineRise").value)
+            );
+        }
     });
 
+    // Calculate carbonation pressure
     function calculateCarbonationPressure(temperature, carbonationLevel) {
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
         let lowerTemp = temperatures.find((t) => t <= temperature);
         let upperTemp = temperatures.find((t) => t >= temperature);
 
         if (lowerTemp === undefined || upperTemp === undefined) {
-            displayResult("carbonationResult", "Invalid temperature range.", false);
+            displayResult("Invalid temperature range.", false);
             return;
         }
 
@@ -116,7 +105,7 @@ if (step3HasInput()) {
         const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
 
         if (lowerPressure === null || upperPressure === null) {
-            displayResult("carbonationResult", "Invalid carbonation level.", false);
+            displayResult("Invalid carbonation level.", false);
             return;
         }
 
@@ -124,90 +113,62 @@ if (step3HasInput()) {
         const pressurePSI = interpolatedPressure * 14.5038;
 
         displayResult(
-            "carbonationResult",
-            `Calculated Carbonation Pressure: ${pressurePSI.toFixed(1)} PSI / ${interpolatedPressure.toFixed(1)} BAR`,
+            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`,
             true
         );
     }
 
-    function interpolateCarbonationLevel(pressureData, targetLevel) {
-        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-        let lowerLevel = levels.find((l) => l <= targetLevel);
-        let upperLevel = levels.find((l) => l >= targetLevel);
+    // Calculate dispensing pressure
+    function calculateDispensingPressure(lineType, lineRun, lineRise) {
+        const lineResistances = {
+            "3/16 Vinyl": 3,
+            "1/4 Vinyl": 0.85,
+            "5/16 Vinyl": 0.4,
+            "3/8 Vinyl": 0.13,
+            "1/2 Vinyl": 0.025,
+            "3/16 Polyethylene": 2.2,
+            "1/4 Polyethylene": 0.5,
+            "3/8 Stainless Steel": 0.2,
+            "5/16 Stainless Steel": 0.5,
+            "1/4 Stainless Steel": 2
+        };
 
-        if (lowerLevel === undefined || upperLevel === undefined) return null;
+        const resistance = lineResistances[lineType] || 0;
+        const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
 
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
-
-        return lowerLevel === upperLevel
-            ? lowerPressure
-            : lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
+        displayResult(
+            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`,
+            true
+        );
     }
 
-function calculateDispensingPressure(carbonationPressurePSI, lineRun, lineRise, lineType, lineRunUnit, lineRiseUnit) {
-    // Resistance values (PSI per foot) based on line type
-    const lineResistances = {
-        "3/16 Vinyl": 3,
-        "1/4 Vinyl": 0.85,
-        "5/16 Vinyl": 0.4,
-        "3/8 Vinyl": 0.13,
-        "1/2 Vinyl": 0.025,
-        "3/16 Polyethylene": 2.2,
-        "1/4 Polyethylene": 0.5,
-        "3/8 Stainless Steel": 0.2,
-        "5/16 Stainless Steel": 0.5,
-        "1/4 Stainless Steel": 2
-    };
-
-    const resistance = lineResistances[lineType] || 0;
-
-    // Unit Conversion: Convert meters to feet if needed
-    const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun; // 1 ft = 0.3048 m
-    const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
-
-    // Correct Formula: Includes carbonation pressure, resistance, gravity, and flow buffer
-    const dispensePressurePSI = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-
-    // Convert PSI to BAR
-    const dispensePressureBAR = dispensePressurePSI * 0.0689476;
-
-    // Display Result in PSI and BAR
-    displayResult(
-        "dispenseResult",
-        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
-        true
-    );
-}
-
+    // Check if Step 3 has input
     function step3HasInput() {
         return document.getElementById("lineType").value ||
                document.getElementById("lineRun").value ||
                document.getElementById("lineRise").value;
     }
 
-    function displayResult(resultId, message, success) {
+    // Show results using Bootstrap alert classes
+    function displayResult(message, success) {
         const container = document.getElementById("resultContainer");
-        let resultDiv = document.getElementById(resultId) || document.createElement("div");
-        resultDiv.id = resultId;
-        resultDiv.style.border = success ? "2px solid green" : "2px solid red";
-        resultDiv.style.padding = "10px";
-        resultDiv.style.marginTop = "10px";
+        const resultDiv = document.createElement("div");
+        resultDiv.className = `alert ${success ? "alert-success" : "alert-danger"}`;
         resultDiv.textContent = message;
         container.appendChild(resultDiv);
     }
 
+    // Clear previous results
     function clearResult(containerId) {
         document.getElementById(containerId).innerHTML = "";
     }
 
-    function showError(elementId, message) {
-        const element = document.getElementById(elementId);
-        element.textContent = message;
-        element.style.display = "inline";
+    // Error handling functions using Bootstrap classes
+    function showError(elementId) {
+        document.getElementById(elementId).classList.remove("d-none");
     }
 
     function hideError(elementId) {
-        document.getElementById(elementId).style.display = "none";
+        document.getElementById(elementId).classList.add("d-none");
     }
 });
