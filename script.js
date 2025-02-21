@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const pressurePSI = interpolatedPressure * 14.5038;
 
         displayResult(
-            `Calculated Carbonation Pressure: ${interpolatedPressure.toFixed(2)} BAR / ${pressurePSI.toFixed(2)} PSI`,
+            `Calculated Carbonation Pressure: ${pressurePSI.toFixed(1)} PSI / ${interpolatedPressure.toFixed(1)} BAR`,
             true
         );
     }
@@ -195,7 +195,7 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     const dispensePressureBAR = dispensePressurePSI * 0.0689476;
 
     displayResult(
-        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(2)} PSI / ${dispensePressureBAR.toFixed(2)} BAR`,
+        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
         true
     );
 }
