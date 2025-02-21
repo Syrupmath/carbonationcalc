@@ -158,28 +158,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Calculate dispensing pressure based on line type, run, and rise
-    function calculateDispensingPressure(lineType, lineRun, lineRise) {
-        const lineResistances = {
-            "3/16 Vinyl": 3,
-            "1/4 Vinyl": 0.85,
-            "5/16 Vinyl": 0.4,
-            "3/8 Vinyl": 0.13,
-            "1/2 Vinyl": 0.025,
-            "3/16 Polyethylene": 2.2,
-            "1/4 Polyethylene": 0.5,
-            "3/8 Stainless Steel": 0.2,
-            "5/16 Stainless Steel": 0.5,
-            "1/4 Stainless Steel": 2
-        };
+function calculateDispensingPressure(lineType, lineRun, lineRise) {
+    const carbonationResult = document.getElementById("resultContainer").textContent.match(/([\d.]+) PSI/);
 
-        const resistance = lineResistances[lineType] || 0;
-        const dispensePressure = resistance * lineRun + lineRise / 2 + 1;
-
-        displayResult(
-            `Calculated Dispense Pressure: ${dispensePressure.toFixed(2)} PSI`,
-            true
-        );
+    if (!carbonationResult) {
+        displayResult("Dispensing pressure cannot be calculated without carbonation pressure.", false);
+        return;
     }
+
+    const carbonationPressurePSI = parseFloat(carbonationResult[1]);
+
+    // Line resistances (in PSI per foot)
+    const lineResistances = {
+        "3/16 Vinyl": 3,
+        "1/4 Vinyl": 0.85,
+        "5/16 Vinyl": 0.4,
+        "3/8 Vinyl": 0.13,
+        "1/2 Vinyl": 0.025,
+        "3/16 Polyethylene": 2.2,
+        "1/4 Polyethylene": 0.5,
+        "3/8 Stainless Steel": 0.2,
+        "5/16 Stainless Steel": 0.5,
+        "1/4 Stainless Steel": 2
+    };
+
+    const resistance = lineResistances[lineType] || 0;
+
+    // Convert meters to feet if necessary
+    const lineRunUnit = document.getElementById("lineRunUnit").value;
+    const lineRiseUnit = document.getElementById("lineRiseUnit").value;
+    const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
+    const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
+
+    // Calculate dispensing pressure
+    const dispensePressurePSI = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
+    const dispensePressureBAR = dispensePressurePSI * 0.0689476;
+
+    displayResult(
+        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(2)} PSI / ${dispensePressureBAR.toFixed(2)} BAR`,
+        true
+    );
+}
 
     // Check if Step 3 has input for dispensing pressure calculation
     function step3HasInput() {
