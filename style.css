@@ -21,16 +21,18 @@ body {
 h1 {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important; /* Black */
-    font-size: 4rem !important; /* Larger size for desktop */
+    font-size: 4rem !important; /* Large size for desktop */
+    line-height: 1.1 !important; /* Tighter spacing between lines */
     color: #222 !important;
     margin-bottom: 1.5rem !important;
-    word-wrap: break-word; /* Prevent text wrapping issues */
+    word-wrap: break-word; /* Prevent awkward text breaks */
 }
 
 /* Medium screens (tablets) */
 @media (max-width: 992px) {
     h1 {
         font-size: 3rem !important;
+        line-height: 1.15 !important; /* Slightly more space for readability */
     }
 }
 
@@ -38,6 +40,7 @@ h1 {
 @media (max-width: 768px) {
     h1 {
         font-size: 2.5rem !important;
+        line-height: 1.2 !important; /* More space on small screens */
     }
 }
 
@@ -45,6 +48,7 @@ h1 {
 @media (max-width: 480px) {
     h1 {
         font-size: 2rem !important;
+        line-height: 1.25 !important; /* Allow extra space on smallest screens */
     }
 }
 
