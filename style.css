@@ -1,5 +1,5 @@
-/* Import Google Fonts: Krona One for headers & Inter ExtraBold for main header */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Krona+One&display=swap');
+/* Import Google Fonts: Inter Black 900 for main header & Krona One for subheaders */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=Krona+One&display=swap');
 
 /* Limit form container width */
 .card {
@@ -17,10 +17,10 @@ body {
     background-color: #f8f9fa; /* Fallback color for contrast */
 }
 
-/* Apply Inter ExtraBold to main header */
+/* Apply Inter Black 900 to main header */
 h1 {
     font-family: 'Inter', sans-serif;
-    font-weight: 800; /* ExtraBold */
+    font-weight: 900; /* Black */
     color: #222; /* Darker color for better contrast */
 }
 
