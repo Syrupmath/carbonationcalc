@@ -74,8 +74,12 @@ li, p {
     font-size: 0.75rem !important;  /* Slightly smaller than default */
     line-height: 1.5 !important;   /* Maintain good readability */
     color: #333;                    /* Slightly softer than pure black */
-    margin-bottom: 1rem;            /* Consistent spacing between paragraphs */
 }
+
+p {
+    margin-bottom: 1rem;
+}
+
 
 /* Apply Inter Black 900 to subheaders with smaller sizes */
 h2 {
