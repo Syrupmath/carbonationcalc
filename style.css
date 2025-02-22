@@ -21,7 +21,7 @@ body {
 h1 {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important; /* Black */
-    font-size: 6rem !important; /* Larger size for emphasis */
+    font-size: 4rem !important; /* Larger size for emphasis */
     color: #222 !important; /* Darker color for better contrast */
     margin-bottom: 1.5rem !important;
 }
