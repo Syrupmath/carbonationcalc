@@ -1,5 +1,5 @@
-/* Import Google Font: Krona One */
-@import url('https://fonts.googleapis.com/css2?family=Krona+One&display=swap');
+/* Import Google Fonts: Krona One for headers & Inter ExtraBold for main header */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Krona+One&display=swap');
 
 /* Limit form container width */
 .card {
@@ -17,10 +17,17 @@ body {
     background-color: #f8f9fa; /* Fallback color for contrast */
 }
 
-/* Apply Krona One font to headers */
-h1, h2, h3, h4, h5, h6 {
+/* Apply Inter ExtraBold to main header */
+h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; /* ExtraBold */
+    color: #222; /* Darker color for better contrast */
+}
+
+/* Apply Krona One font to all other headers */
+h2, h3, h4, h5, h6 {
     font-family: 'Krona One', sans-serif;
-    color: #333; /* Dark gray for better readability */
+    color: #333;
 }
 
 /* Form styling for clarity */
