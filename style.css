@@ -45,7 +45,7 @@ header p {
 /* Medium screens (tablets) */
 @media (max-width: 992px) {
     h1 {
-        font-size: 3rem !important;
+        font-size: 2rem !important;
         line-height: 0.9 !important;
     }
 }
@@ -53,7 +53,7 @@ header p {
 /* Small screens (phones) */
 @media (max-width: 768px) {
     h1 {
-        font-size: 2rem !important;
+        font-size: 1.75rem !important;
         line-height: 1 !important;
     }
 }
@@ -61,7 +61,7 @@ header p {
 /* Extra small screens (very small phones) */
 @media (max-width: 480px) {
     h1 {
-        font-size: 1.5rem !important;
+        font-size: 1.25rem !important;
         line-height: 1.1 !important;
         letter-spacing: -0.2px !important; /* Prevent text wrapping */
     }
