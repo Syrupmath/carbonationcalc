@@ -69,8 +69,8 @@ header p {
 }
 
 /* Global paragraph font size adjustment */
-p {
-    font-size: 0.9rem !important;  /* Slightly smaller than default */
+li, p {
+    font-size: 0.75rem !important;  /* Slightly smaller than default */
     line-height: 1.5 !important;   /* Maintain good readability */
     color: #333;                    /* Slightly softer than pure black */
     margin-bottom: 1rem;            /* Consistent spacing between paragraphs */
