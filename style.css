@@ -23,43 +23,42 @@ header {
     text-align: center;
 }
 
-/* Desktop screens */
+/* Responsive and fluid header text scaling */
 header h1 {
     font-family: 'League Spartan', sans-serif !important;
     font-weight: 900 !important;
-    font-size: clamp(2rem, 6vw, 5rem) !important; /* Responsive scaling */
-    line-height: 0.8 !important;
+    font-size: clamp(2.5rem, 5vw, 4.5rem) !important; /* Scales dynamically based on viewport */
+    line-height: 0.85 !important;
     color: #222 !important;
     margin-bottom: 0.25rem !important;
     word-wrap: break-word;
-    letter-spacing: -0.5px !important;
+    letter-spacing: -0.4px !important;
 }
 
-/* Force overrides for tablets */
+/* Slightly larger size for tablets */
 @media (max-width: 992px) {
-   header h1 {
+    h1 {
         font-size: 3rem !important;
         line-height: 0.9 !important;
     }
 }
 
-/* Force overrides for phones */
+/* Improved size for iPhone 12 Pro and phones */
 @media (max-width: 768px) {
-   header h1 {
-        font-size: 2rem !important;
+    h1 {
+        font-size: 2.25rem !important;
         line-height: 1 !important;
     }
 }
 
-/* Extra small screens (iPhones & small phones) */
+/* Fine-tuning for very small phones */
 @media (max-width: 480px) {
-   header h1 {
-        font-size: 1.5rem !important;
+    h1 {
+        font-size: 1.75rem !important;
         line-height: 1.1 !important;
         letter-spacing: -0.2px !important;
     }
 }
-
 header p {
     font-family: Arial, sans-serif; /* Keep the same font family */
     font-size: .75rem; /* Slightly smaller font for the byline */
