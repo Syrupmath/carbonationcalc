@@ -17,16 +17,31 @@ body {
     background-color: #f8f9fa; /* Fallback color for contrast */
 }
 
-/* Apply Inter Black 900 to main header */
+/* Apply Inter Black 900 to main header with larger size */
 h1 {
     font-family: 'Inter', sans-serif;
     font-weight: 900; /* Black */
+    font-size: 3rem; /* Larger size for emphasis */
     color: #222; /* Darker color for better contrast */
+    margin-bottom: 1.5rem;
 }
 
-/* Apply Krona One font to all other headers */
-h2, h3, h4, h5, h6 {
+/* Apply Krona One font to subheaders with smaller sizes */
+h2 {
     font-family: 'Krona One', sans-serif;
+    font-size: 1.5rem; /* Smaller than default */
+    color: #333;
+}
+
+h3 {
+    font-family: 'Krona One', sans-serif;
+    font-size: 1.25rem; /* Slightly smaller */
+    color: #333;
+}
+
+h4, h5, h6 {
+    font-family: 'Krona One', sans-serif;
+    font-size: 1rem; /* Uniform smaller size for sub-subheaders */
     color: #333;
 }
 
