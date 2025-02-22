@@ -28,7 +28,7 @@ header h1 {
     font-size: 5rem !important; /* Larger size for desktop */
     line-height: 0.8 !important; /* Tighter spacing between lines */
     color: #222 !important;
-    margin-bottom: 1.5rem !important;
+    /* margin-bottom: 1.5rem !important; */
     word-wrap: break-word;
     letter-spacing: -0.5px !important;
 }
