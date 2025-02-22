@@ -96,7 +96,7 @@ h3 {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important;
     font-size: 1.1rem !important;
-    color: #333 !important;
+    color: #cc0000 !important;  /* Bold red color */
 }
 
 h4, h5, h6 {
