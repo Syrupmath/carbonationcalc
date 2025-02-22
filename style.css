@@ -68,7 +68,7 @@ header p {
     padding-top: 1rem;
 }
 
-.safety {
+#safety {
     font-family: Arial, sans-serif; /* Keep the same font family */
     font-size: .75rem; /* Slightly smaller font for the byline */
     font-weight: 400; /* Normal weight for the byline */
