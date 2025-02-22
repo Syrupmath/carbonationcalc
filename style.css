@@ -39,12 +39,13 @@ header p {
     font-weight: 400; /* Normal weight for the byline */
     color: #000; /* Set the text color to black */
     margin: 0; /* Adjust spacing between title and byline */
+    padding-bottom: 1rem;
 }
 
 /* Medium screens (tablets) */
 @media (max-width: 992px) {
     h1 {
-        font-size: 4rem !important;
+        font-size: 3.5rem !important;
         line-height: 0.95 !important;
     }
 }
