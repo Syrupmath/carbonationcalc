@@ -68,6 +68,15 @@ header p {
     padding-top: 1rem;
 }
 
+.safety {
+    font-family: Arial, sans-serif; /* Keep the same font family */
+    font-size: .75rem; /* Slightly smaller font for the byline */
+    font-weight: 400; /* Normal weight for the byline */
+    color: #000; /* Set the text color to black */
+    margin: 0; /* Adjust spacing between title and byline */
+    padding-top: 1rem;
+}
+
 /* Apply Inter Black 900 to subheaders with smaller sizes */
 h2 {
     font-family: 'Inter', sans-serif !important;
