@@ -23,14 +23,41 @@ header {
     text-align: center;
 }
 
+/* Desktop screens */
 header h1 {
     font-family: 'League Spartan', sans-serif !important;
     font-weight: 900 !important;
-    font-size: 5rem !important; /* Larger size for desktop */
-    line-height: 0.8 !important; /* Tighter spacing between lines */
+    font-size: clamp(2rem, 6vw, 5rem) !important; /* Responsive scaling */
+    line-height: 0.8 !important;
     color: #222 !important;
+    margin-bottom: 0.25rem !important;
     word-wrap: break-word;
     letter-spacing: -0.5px !important;
+}
+
+/* Force overrides for tablets */
+@media (max-width: 992px) {
+   header h1 {
+        font-size: 3rem !important;
+        line-height: 0.9 !important;
+    }
+}
+
+/* Force overrides for phones */
+@media (max-width: 768px) {
+   header h1 {
+        font-size: 2rem !important;
+        line-height: 1 !important;
+    }
+}
+
+/* Extra small screens (iPhones & small phones) */
+@media (max-width: 480px) {
+   header h1 {
+        font-size: 1.5rem !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.2px !important;
+    }
 }
 
 header p {
@@ -40,31 +67,6 @@ header p {
     color: #000; /* Set the text color to black */
     margin: 0; /* Adjust spacing between title and byline */
     padding-top: 1rem;
-}
-
-/* Medium screens (tablets) */
-@media (max-width: 992px) {
-    h1 {
-        font-size: 2rem !important;
-        line-height: 0.9 !important;
-    }
-}
-
-/* Small screens (phones) */
-@media (max-width: 768px) {
-    h1 {
-        font-size: 1.75rem !important;
-        line-height: 1 !important;
-    }
-}
-
-/* Extra small screens (very small phones) */
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.25rem !important;
-        line-height: 1.1 !important;
-        letter-spacing: -0.2px !important; /* Prevent text wrapping */
-    }
 }
 
 /* Apply Inter Black 900 to subheaders with smaller sizes */
