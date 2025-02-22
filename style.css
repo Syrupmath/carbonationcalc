@@ -17,16 +17,28 @@ body {
     background-color: #f8f9fa; /* Fallback color for contrast */
 }
 
-/* Apply League Spartan Black 900 to main header with larger size */
-h1 {
+header {
+    padding: .5rem 0 .5rem; /* Keep some padding for spacing */
+    text-align: center;
+}
+
+header h1 {
     font-family: 'League Spartan', sans-serif !important;
     font-weight: 900 !important;
     font-size: 5rem !important; /* Larger size for desktop */
-    line-height: 0.9 !important; /* Tighter spacing between lines */
+    line-height: 0.8 !important; /* Tighter spacing between lines */
     color: #222 !important;
     margin-bottom: 1.5rem !important;
     word-wrap: break-word;
     letter-spacing: -0.5px !important;
+}
+
+header p {
+    font-family: Arial, sans-serif; /* Keep the same font family */
+    font-size: .75rem; /* Slightly smaller font for the byline */
+    font-weight: 400; /* Normal weight for the byline */
+    color: #000; /* Set the text color to black */
+    margin: 0; /* Adjust spacing between title and byline */
 }
 
 /* Medium screens (tablets) */
@@ -73,6 +85,18 @@ h4, h5, h6 {
     font-weight: 900 !important;
     font-size: 1rem !important;
     color: #333 !important;
+}
+
+#author {
+	padding-bottom: .5rem;
+	}
+
+#urlinfo {
+	display: none;
+	}
+
+hr {
+    margin: 2rem 0;
 }
 
 /* Form styling for clarity */
