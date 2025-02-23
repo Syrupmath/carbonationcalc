@@ -118,6 +118,12 @@ hr {
     box-shadow: none;
 }
 
+/* Enhance form-check labels for better visibility */
+.form-check-label {
+    font-weight: 600 !important;  /* Semi-bold for more gravity */
+    color: #222 !important;       /* Slightly darker text for better contrast */
+}
+
 /* Enhance button styles */
 .btn-primary {
     background-color: #007bff;
