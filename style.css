@@ -118,12 +118,18 @@ hr {
     box-shadow: none;
 }
 
-/* Enhance form-check labels for better visibility */
+/* Enhance form-check labels for better visibility. Make form-check-label slightly smaller */
 .form-check-label {
-    font-weight: 600 !important;  /* Semi-bold for more gravity */
-    color: #222 !important;       /* Slightly darker text for better contrast */
+    font-weight: 600 !important;  /* Semi-bold for emphasis */
+    font-size: 0.85rem !important;  /* Slightly smaller than the default (~0.875rem) */
+    color: #222 !important;  /* High contrast for readability */
 }
 
+/* Make small descriptions slightly smaller */
+.d-block.text-muted {
+    font-size: 0.75rem !important;  /* Smaller text for subtle descriptions */
+    color: #666 !important;  /* Lighter shade for subtlety */
+}
 /* Enhance button styles */
 .btn-primary {
     background-color: #007bff;
