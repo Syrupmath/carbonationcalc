@@ -67,35 +67,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             hideError("temperatureError");
         }
 
-// Step 3: Validate Dispensing Pressure (if any fields are filled)
-if (step3HasInput()) {
-    const lineType = document.getElementById("lineType").value;
-    const lineRun = parseFloat(document.getElementById("lineRun").value);
-    const lineRise = parseFloat(document.getElementById("lineRise").value);
-    const lineRunUnit = document.getElementById("lineRunUnit").value;
-    const lineRiseUnit = document.getElementById("lineRiseUnit").value;
+        // Step 3: Validate Dispensing Pressure (if any fields are filled)
+        if (step3HasInput()) {
+            const lineType = document.getElementById("lineType").value;
+            const lineRun = document.getElementById("lineRun").value;
+            const lineRise = document.getElementById("lineRise").value;
 
-    if (!lineType || isNaN(lineRun) || isNaN(lineRise)) {
-        showError("lineError");
-        valid = false;
-    } else {
-        hideError("lineError");
+            if (!lineType || !lineRun || !lineRise) {
+                showError("lineError");
+                valid = false;
+            } else {
+                hideError("lineError");
+            }
+        } else {
+            hideError("lineError");
+        }
+
+        return valid;
     }
-
-    // Convert meters to feet if necessary
-    const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
-    const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
-
-    // Error: Rise cannot be greater than Run
-    if (Math.abs(riseInFeet) > runInFeet) {
-        showError("lineError");
-        document.getElementById("lineError").textContent =
-            "Error: The rise/drop cannot be greater than the total line length.";
-        valid = false;
-    } else {
-        hideError("lineError");
-    }
-}
 
     // Perform the carbonation and dispensing pressure calculations
     function performCalculations() {
