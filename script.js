@@ -32,59 +32,70 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Form validation function
-    function validateForm() {
-        let valid = true;
+function validateForm() {
+    let valid = true;
 
-        // Step 1: Validate Carbonation Level
-        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
-        if (!carbonationSelection) {
-            showError("carbonationError");
+    // Step 1: Validate Carbonation Level
+    const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
+    if (!carbonationSelection) {
+        showError("carbonationError");
+        valid = false;
+    } else {
+        hideError("carbonationError");
+    }
+
+    const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom"
+        ? parseFloat(document.getElementById("customValue").value)
+        : parseFloat(carbonationSelection?.value);
+
+    if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
+        showError("carbonationError");
+        valid = false;
+    }
+
+    // Step 2: Validate Temperature
+    const temperatureInput = parseFloat(document.getElementById("temperature").value);
+    const temperatureUnit = document.getElementById("temperatureUnit").value;
+    const convertedTemperature = temperatureUnit === "F"
+        ? (temperatureInput - 32) * (5 / 9)
+        : temperatureInput;
+
+    if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
+        showError("temperatureError");
+        valid = false;
+    } else {
+        hideError("temperatureError");
+    }
+
+    // Step 3: Validate Dispensing Pressure (if any fields are filled)
+    if (step3HasInput()) {
+        const lineType = document.getElementById("lineType").value;
+        const lineRun = parseFloat(document.getElementById("lineRun").value);
+        const lineRise = parseFloat(document.getElementById("lineRise").value);
+        const lineRunUnit = document.getElementById("lineRunUnit").value;
+        const lineRiseUnit = document.getElementById("lineRiseUnit").value;
+
+        if (!lineType || isNaN(lineRun) || isNaN(lineRise) || !lineRunUnit || !lineRiseUnit) {
+            showError("lineError", "Please complete all fields for dispensing pressure.");
             valid = false;
         } else {
-            hideError("carbonationError");
-        }
+            // Convert meters to feet for comparison if necessary
+            const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
+            const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
 
-        const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom"
-            ? parseFloat(document.getElementById("customValue").value)
-            : parseFloat(carbonationSelection?.value);
-
-        if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
-            showError("carbonationError");
-            valid = false;
-        }
-
-        // Step 2: Validate Temperature
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const convertedTemperature = temperatureUnit === "F"
-            ? (temperatureInput - 32) * (5 / 9)
-            : temperatureInput;
-
-        if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
-            showError("temperatureError");
-            valid = false;
-        } else {
-            hideError("temperatureError");
-        }
-
-        // Step 3: Validate Dispensing Pressure (if any fields are filled)
-        if (step3HasInput()) {
-            const lineType = document.getElementById("lineType").value;
-            const lineRun = document.getElementById("lineRun").value;
-            const lineRise = document.getElementById("lineRise").value;
-
-            if (!lineType || !lineRun || !lineRise) {
-                showError("lineError");
+            if (Math.abs(riseInFeet) > runInFeet) {
+                showError("lineError", "Rise/drop cannot be greater than total line length.");
                 valid = false;
             } else {
                 hideError("lineError");
             }
-        } else {
-            hideError("lineError");
         }
-
-        return valid;
+    } else {
+        hideError("lineError");
     }
+
+    return valid;
+}
 
     // Perform the carbonation and dispensing pressure calculations
     function performCalculations() {
