@@ -151,3 +151,36 @@ hr {
 .card {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Improve result card styling */
+#resultContainer {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+
+/* Unified styling for result cards */
+.result-card {
+    background-color: #e6f8e6; /* Soft green success background */
+    border: 1px solid #28a745; /* Green border for success */
+    border-radius: 8px; /* Rounded corners */
+    padding: 1.5rem; /* Extra spacing for elegance */
+    width: 100%;
+    max-width: 500px; /* Keeps results compact */
+    text-align: center; /* Centers text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    font-size: 1rem;
+    font-weight: 600;
+    color: #155724; /* Deep green text for better readability */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Hover effect for subtle interaction */
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
