@@ -22,8 +22,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Calculate button handler
     document.getElementById("calculateButton").addEventListener("click", (event) => {
         event.preventDefault(); // Prevent form submission refreshing the page
-        clearResult("resultContainer");
-
+if (!step3HasInput()) {
+    clearResult("resultContainer"); 
+}
         let isValid = validateForm();
 
         if (isValid) {
