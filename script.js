@@ -38,7 +38,7 @@ function validateForm() {
     // Step 1: Validate Carbonation Level
     const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
     if (!carbonationSelection) {
-        showError("carbonationError");
+        showError("carbonationError", "Please select a carbonation level.");
         valid = false;
     } else {
         hideError("carbonationError");
@@ -49,7 +49,7 @@ function validateForm() {
         : parseFloat(carbonationSelection?.value);
 
     if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
-        showError("carbonationError");
+        showError("carbonationError", "Please enter a valid carbonation level.");
         valid = false;
     }
 
@@ -61,7 +61,7 @@ function validateForm() {
         : temperatureInput;
 
     if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
-        showError("temperatureError");
+        showError("temperatureError", "Temperature must be between 0°C and 30°C.");
         valid = false;
     } else {
         hideError("temperatureError");
@@ -84,14 +84,16 @@ function validateForm() {
             const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
 
             if (Math.abs(riseInFeet) > runInFeet) {
-                showError("lineError", "Total run must be longer than rise/drop.");
+                hideError("lineError"); // Ensure other errors are not displayed incorrectly
+                showError("riseError", "Total run must be longer than rise/drop.");
                 valid = false;
             } else {
-                hideError("lineError");
+                hideError("riseError");
             }
         }
     } else {
         hideError("lineError");
+        hideError("riseError");
     }
 
     return valid;
