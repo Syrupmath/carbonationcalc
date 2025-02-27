@@ -1,216 +1,153 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    let carbonationData;
 
-    // Load carbonation data from JSON
-    async function loadCarbonationData() {
-        try {
-            const response = await fetch("data.json");
-            carbonationData = await response.json();
-            console.log("Carbonation data loaded successfully:", carbonationData);
-        } catch (error) {
-            console.error("Error loading carbonation data:", error);
-        }
-    }
+/* Import Google Fonts: League Spartan Black 900 for main header & Inter Black 900 for subheaders */
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@900&family=Inter:wght@900&display=swap');
 
-    await loadCarbonationData();
-
-    // Automatically select "Custom" radio on custom input focus
-    document.getElementById("customValue").addEventListener("focus", () => {
-        document.getElementById("customRadio").checked = true;
-    });
-
-    // Calculate button handler
-    document.getElementById("calculateButton").addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent form submission refreshing the page
-        clearResult("resultContainer");
-
-        let isValid = validateForm();
-
-        if (isValid) {
-            performCalculations();
-        }
-    });
-
-    // Form validation function
-    function validateForm() {
-        let valid = true;
-
-        // Step 1: Validate Carbonation Level
-        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
-        if (!carbonationSelection) {
-            showError("carbonationError");
-            valid = false;
-        } else {
-            hideError("carbonationError");
-        }
-
-        const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom"
-            ? parseFloat(document.getElementById("customValue").value)
-            : parseFloat(carbonationSelection?.value);
-
-        if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
-            showError("carbonationError");
-            valid = false;
-        }
-
-        // Step 2: Validate Temperature
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const convertedTemperature = temperatureUnit === "F"
-            ? (temperatureInput - 32) * (5 / 9)
-            : temperatureInput;
-
-        if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
-            showError("temperatureError");
-            valid = false;
-        } else {
-            hideError("temperatureError");
-        }
-
-        // Step 3: Validate Dispensing Pressure (if any fields are filled)
-        if (step3HasInput()) {
-            const lineType = document.getElementById("lineType").value;
-            const lineRun = document.getElementById("lineRun").value;
-            const lineRise = document.getElementById("lineRise").value;
-
-            if (!lineType || !lineRun || !lineRise) {
-                showError("lineError");
-                valid = false;
-            } else {
-                hideError("lineError");
-            }
-        } else {
-            hideError("lineError");
-        }
-
-        return valid;
-    }
-
-    // Perform the carbonation and dispensing pressure calculations
-    function performCalculations() {
-        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
-        const targetCarbonation = carbonationSelection.value === "custom"
-            ? parseFloat(document.getElementById("customValue").value)
-            : parseFloat(carbonationSelection.value);
-
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const convertedTemperature = temperatureUnit === "F"
-            ? (temperatureInput - 32) * (5 / 9)
-            : temperatureInput;
-
-        calculateCarbonationPressure(convertedTemperature, targetCarbonation);
-
-        if (step3HasInput()) {
-            const lineType = document.getElementById("lineType").value;
-            const lineRun = parseFloat(document.getElementById("lineRun").value);
-            const lineRise = parseFloat(document.getElementById("lineRise").value);
-
-            calculateDispensingPressure(lineType, lineRun, lineRise);
-        }
-    }
-
-    // Calculate carbonation pressure based on temperature and CO2 level
-    function calculateCarbonationPressure(temperature, carbonationLevel) {
-        const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
-        let lowerTemp = temperatures.find((t) => t <= temperature);
-        let upperTemp = temperatures.find((t) => t >= temperature);
-
-        if (lowerTemp === undefined || upperTemp === undefined) {
-            displayResult("Invalid temperature range.", false);
-            return;
-        }
-
-        const lowerPressureData = carbonationData[lowerTemp];
-        const upperPressureData = carbonationData[upperTemp];
-
-        const lowerPressure = interpolateCarbonationLevel(lowerPressureData, carbonationLevel);
-        const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
-
-        if (lowerPressure === null || upperPressure === null) {
-            displayResult("Invalid carbonation level.", false);
-            return;
-        }
-
-        const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
-        const pressurePSI = interpolatedPressure * 14.5038;
-
-        displayResult(
-            `Calculated Carbonation Pressure: ${pressurePSI.toFixed(1)} PSI / ${interpolatedPressure.toFixed(1)} BAR`,
-            true
-        );
-    }
-
-    // Interpolate carbonation level based on given pressure data
-    function interpolateCarbonationLevel(pressureData, targetLevel) {
-        const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-        let lowerLevel = levels.find((l) => l <= targetLevel);
-        let upperLevel = levels.find((l) => l >= targetLevel);
-
-        if (lowerLevel === undefined || upperLevel === undefined) return null;
-
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
-
-        return lowerLevel === upperLevel
-            ? lowerPressure
-            : lowerPressure + ((targetLevel - lowerLevel) / (upperLevel - lowerLevel)) * (upperPressure - lowerPressure);
-    }
-
-    // Calculate dispensing pressure based on line type, run, and rise
-function calculateDispensingPressure(lineType, lineRun, lineRise) {
-    const carbonationResult = document.getElementById("resultContainer").textContent.match(/([\d.]+) PSI/);
-
-    if (!carbonationResult) {
-        displayResult("Dispensing pressure cannot be calculated without carbonation pressure.", false);
-        return;
-    }
-
-    const carbonationPressurePSI = parseFloat(carbonationResult[1]);
-
-    // Line resistances (in PSI per foot)
-    const lineResistances = {
-        "3/16 Vinyl": 3,
-        "1/4 Vinyl": 0.85,
-        "5/16 Vinyl": 0.4,
-        "3/8 Vinyl": 0.13,
-        "1/2 Vinyl": 0.025,
-        "3/16 Polyethylene": 2.2,
-        "1/4 Polyethylene": 0.5,
-        "3/8 Stainless Steel": 0.2,
-        "5/16 Stainless Steel": 0.5,
-        "1/4 Stainless Steel": 2
-    };
-
-    const resistance = lineResistances[lineType] || 0;
-
-    // Convert meters to feet if necessary
-    const lineRunUnit = document.getElementById("lineRunUnit").value;
-    const lineRiseUnit = document.getElementById("lineRiseUnit").value;
-    const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
-    const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
-
-    // Calculate dispensing pressure
-    const dispensePressurePSI = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
-    const dispensePressureBAR = dispensePressurePSI * 0.0689476;
-
-    displayResult(
-        `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
-        true
-    );
+/* Limit form container width */
+.card {
+    max-width: 700px;
+    margin: 0 auto; /* Centers the form horizontally */
+    padding-top: 0;
 }
 
-    // Check if Step 3 has input for dispensing pressure calculation
-    function step3HasInput() {
-        return document.getElementById("lineType").value ||
-               document.getElementById("lineRun").value ||
-               document.getElementById("lineRise").value;
-    }
+/* Set background image styles */
+body {
+    background: url('background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-color: #f8f9fa; /* Fallback color for contrast */
+}
 
-    // Display result messages
-    function displayResult(message, success) {
-        const container = document.getElementById("resultContainer");
-        const resultDiv = document.createElement("div");
-        resultDiv.className = `alert ${success ? "alert-success" : "alert-danger"}`;
-        resultDiv.textContent = message;
-        container.appendChild(resultD
+header {
+    padding: .5rem 0 .5rem; /* Keep some padding for spacing */
+    text-align: center;
+}
+
+/* Responsive and fluid header text scaling */
+header h1 {
+    font-family: 'League Spartan', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: clamp(2.5rem, 5vw, 4.5rem) !important; /* Scales dynamically based on viewport */
+    line-height: 0.85 !important;
+    color: #222 !important;
+    margin-bottom: 0.25rem !important;
+    word-wrap: break-word;
+    letter-spacing: -0.4px !important;
+}
+
+/* Slightly larger size for tablets */
+@media (max-width: 992px) {
+    h1 {
+        font-size: 3rem !important;
+        line-height: 0.9 !important;
+    }
+}
+
+/* Improved size for iPhone 12 Pro and phones */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.25rem !important;
+        line-height: 1 !important;
+    }
+}
+
+/* Fine-tuning for very small phones */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.75rem !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.2px !important;
+    }
+}
+header p {
+    font-family: Arial, sans-serif; /* Keep the same font family */
+    font-size: .75rem; /* Slightly smaller font for the byline */
+    font-weight: 400; /* Normal weight for the byline */
+    color: #000; /* Set the text color to black */
+    margin: 0; /* Adjust spacing between title and byline */
+    padding-top: 1rem;
+}
+
+/* Global paragraph font size adjustment */
+li, p {
+    font-size: 0.75rem !important;  /* Slightly smaller than default */
+    line-height: 1.5 !important;   /* Maintain good readability */
+    color: #333;                    /* Slightly softer than pure black */
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+
+/* Apply Inter Black 900 to subheaders with smaller sizes */
+h2 {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: 1.2rem !important;
+    color: #333 !important;
+}
+
+h3 {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: 1.1rem !important;
+    color: #cc0000 !important;  /* Bold red color */
+}
+
+h4, h5, h6 {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: 1rem !important;
+    color: #333 !important;
+}
+
+#author {
+    margin-bottom: 0.5rem !important; /* Keep a small gap below */
+    padding: 0 !important;
+}
+
+hr {
+    margin: 2rem 0;
+}
+
+/* Form styling for clarity */
+.form-control, .form-select {
+    border-radius: 0.25rem;
+    box-shadow: none;
+}
+
+/* Enhance form-check labels for better visibility. Make form-check-label slightly smaller */
+.form-check-label {
+    font-weight: 600 !important;  /* Semi-bold for emphasis */
+    font-size: 0.85rem !important;  /* Slightly smaller than the default (~0.875rem) */
+    color: #222 !important;  /* High contrast for readability */
+}
+
+/* Make small descriptions slightly smaller */
+.d-block.text-muted {
+    font-size: 0.75rem !important;  /* Smaller text for subtle descriptions */
+    color: #666 !important;  /* Lighter shade for subtlety */
+}
+/* Enhance button styles */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Result container spacing */
+#resultContainer {
+    margin-top: 20px;
+}
+
+/* Card shadow enhancement */
+.card {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
