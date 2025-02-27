@@ -207,14 +207,17 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
                document.getElementById("lineRise").value;
     }
 
-    // Display result messages
-    function displayResult(message, success) {
-        const container = document.getElementById("resultContainer");
-        const resultDiv = document.createElement("div");
-        resultDiv.className = `alert ${success ? "alert-success" : "alert-danger"}`;
-        resultDiv.textContent = message;
-        container.appendChild(resultDiv);
-    }
+    // Display result messages in a styled card
+function displayResult(message) {
+    const container = document.getElementById("resultContainer");
+    container.innerHTML = ""; // Clear previous results
+
+    const resultDiv = document.createElement("div");
+    resultDiv.className = "result-card"; // Uses the custom result card styling
+    resultDiv.textContent = message;
+
+    container.appendChild(resultDiv);
+}
 
     // Clear the result display
     function clearResult(containerId) {
