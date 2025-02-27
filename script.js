@@ -215,12 +215,27 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
 
     // Display result messages
     function displayResult(message, success) {
-        const container = document.getElementById("resultContainer");
-        const resultDiv = document.createElement("div");
-        resultDiv.className = `alert ${success ? "alert-success" : "alert-danger"}`;
-        resultDiv.textContent = message;
-        container.appendChild(resultDiv);
+    const container = document.getElementById("resultContainer");
+
+    // Check if the message already exists to prevent duplicates
+    const existingMessages = Array.from(container.children);
+    if (existingMessages.some(msg => msg.textContent === message)) return;
+
+    // Remove old carbonation pressure results if they exist
+    if (message.includes("Calculated Carbonation Pressure")) {
+        existingMessages.forEach(msg => {
+            if (msg.textContent.includes("Calculated Carbonation Pressure")) {
+                msg.remove();
+            }
+        });
     }
+
+    // Create new result div and add to container
+    const resultDiv = document.createElement("div");
+    resultDiv.className = `alert ${success ? "alert-success" : "alert-danger"}`;
+    resultDiv.textContent = message;
+    container.appendChild(resultDiv);
+}
 
     // Clear the result display
     function clearResult(containerId) {
