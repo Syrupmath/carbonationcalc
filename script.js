@@ -207,10 +207,18 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
                document.getElementById("lineRise").value;
     }
 
-    // Display result messages in a styled card
+// Display multiple result messages
 function displayResult(message) {
     const container = document.getElementById("resultContainer");
-    container.innerHTML = ""; // Clear previous results
+
+    // Create a new result card
+    const resultDiv = document.createElement("div");
+    resultDiv.className = "result-card"; // Uses the custom result card styling
+    resultDiv.textContent = message;
+
+    // Append result card without clearing previous ones
+    container.appendChild(resultDiv);
+}
 
     const resultDiv = document.createElement("div");
     resultDiv.className = "result-card"; // Uses the custom result card styling
