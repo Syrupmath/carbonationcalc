@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // Form validation function
+// Form validation function
 function validateForm() {
     let valid = true;
 
@@ -84,7 +84,7 @@ function validateForm() {
             const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
 
             if (Math.abs(riseInFeet) > runInFeet) {
-                showError("lineError", "Rise/drop cannot be greater than total line length.");
+                showError("lineError", "Total run must be longer than rise/drop.");
                 valid = false;
             } else {
                 hideError("lineError");
