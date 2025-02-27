@@ -69,20 +69,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Step 3: Validate Dispensing Pressure (if any fields are filled)
         if (step3HasInput()) {
-            const lineType = document.getElementById("lineType").value;
-            const lineRun = document.getElementById("lineRun").value;
-            const lineRise = document.getElementById("lineRise").value;
-
-            if (!lineType || !lineRun || !lineRise) {
-                showError("lineError");
-                valid = false;
-            } else {
-                hideError("lineError");
-            }
+        const lineType = document.getElementById("lineType").value;
+        const lineRun = parseFloat(document.getElementById("lineRun").value);
+        const lineRise = parseFloat(document.getElementById("lineRise").value);
+        
+        if (!lineType || isNaN(lineRun) || isNaN(lineRise)) {
+            showError("lineError");
+            document.getElementById("lineError").textContent = "Please complete all fields for dispensing pressure.";
+            valid = false;
+        } else if (lineRise > lineRun) {
+            showError("lineError");
+            document.getElementById("lineError").textContent = "Total run must be longer than rise/drop.";
+            valid = false;
         } else {
             hideError("lineError");
         }
-
+}
         return valid;
     }
 
