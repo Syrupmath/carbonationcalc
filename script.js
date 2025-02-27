@@ -21,16 +21,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Calculate button handler
     document.getElementById("calculateButton").addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent form submission refreshing the page
+    event.preventDefault(); // Prevent page refresh
+
+    let isValid = validateForm(); // Run validation first
+
+    // Clear results ONLY if Steps 1 or 2 fail (not Step 3 alone)
+    if (!isValid && !step3HasInput()) {
         clearResult("resultContainer");
+    }
 
-        let isValid = validateForm();
-
-        if (isValid) {
-            performCalculations();
-        }
-    });
-
+    if (isValid) {
+        performCalculations();
+    }
+});
+    
     // Form validation function
     function validateForm() {
         let valid = true;
