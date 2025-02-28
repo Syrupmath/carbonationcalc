@@ -117,10 +117,10 @@ hr {
     box-shadow: none;
 }
 
-/* Enhance form-check labels for better visibility. Make form-check-label slightly smaller */
+/* Enhance form-check labels for better visibility. */
 .form-check-label {
     font-weight: 600 !important;  /* Semi-bold for emphasis */
-    font-size: 0.9rem !important;
+    font-size: 1rem !important;
     color: #222 !important;  /* High contrast for readability */
 }
 
