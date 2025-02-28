@@ -160,7 +160,13 @@ hr {
     align-items: center;
 }
 
+.input-group .form-control {
+    flex: 3; /* 60% width */
+}
 
+.input-group .form-select {
+    flex: 2; /* 40% width */
+}
 
 
 /* Unified styling for result cards */
