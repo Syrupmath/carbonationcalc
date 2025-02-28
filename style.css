@@ -71,7 +71,7 @@ header p {
 
 /* Global paragraph font size adjustment */
 li, p {
-    font-size: 0.75rem !important;  /* Slightly smaller than default */
+    font-size: 0.8rem !important;  /* Slightly smaller than default */
     line-height: 1.5 !important;   /* Maintain good readability */
     color: #333;                    /* Slightly softer than pure black */
 }
@@ -81,7 +81,6 @@ p {
 }
 
 
-/* Apply Inter Black 900 to subheaders with smaller sizes */
 h2 {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important;
@@ -121,13 +120,13 @@ hr {
 /* Enhance form-check labels for better visibility. Make form-check-label slightly smaller */
 .form-check-label {
     font-weight: 600 !important;  /* Semi-bold for emphasis */
-    font-size: 0.85rem !important;  /* Slightly smaller than the default (~0.875rem) */
+    font-size: 0.875rem !important;
     color: #222 !important;  /* High contrast for readability */
 }
 
 /* Make small descriptions slightly smaller */
 .d-block.text-muted {
-    font-size: 0.75rem !important;  /* Smaller text for subtle descriptions */
+    font-size: 0.8rem !important;  /* Smaller text for subtle descriptions */
     color: #666 !important;  /* Lighter shade for subtlety */
 }
 /* Enhance button styles */
