@@ -161,11 +161,11 @@ hr {
 }
 
 .input-group .form-control {
-    flex: 3; /* 60% width */
+    flex: 3 !important; /* Force 60% width */
 }
 
 .input-group .form-select {
-    flex: 2; /* 40% width */
+    flex: 2 !important; /* Force 40% width */
 }
 
 
