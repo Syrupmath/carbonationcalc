@@ -160,15 +160,6 @@ hr {
     align-items: center;
 }
 
-.input-group .form-control {
-    flex: 3 !important; /* Force 60% width */
-}
-
-.input-group .form-select {
-    flex: 2 !important; /* Force 40% width */
-}
-
-
 /* Unified styling for result cards */
 .result-card {
     background-color: #e6f8e6; /* Soft green success background */
@@ -189,4 +180,15 @@ hr {
 .result-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Force 60% width for number input, 40% for unit dropdown */
+.input-group .form-control {
+    flex: 0 0 60% !important; /* Override Bootstrap's auto width */
+    max-width: 60% !important; 
+}
+
+.input-group .form-select {
+    flex: 0 0 40% !important; 
+    max-width: 40% !important;
 }
