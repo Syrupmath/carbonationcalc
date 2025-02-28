@@ -215,27 +215,50 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
 
     // Display result messages
     function displayResult(message, success) {
-    const container = document.getElementById("resultContainer");
-
-    // Check if the message already exists to prevent duplicates
-    const existingMessages = Array.from(container.children);
-    if (existingMessages.some(msg => msg.textContent === message)) return;
-
-    // Remove old carbonation pressure results if they exist
-    if (message.includes("Calculated Carbonation Pressure")) {
-        existingMessages.forEach(msg => {
-            if (msg.textContent.includes("Calculated Carbonation Pressure")) {
-                msg.remove();
-            }
-        });
+        const container = document.getElementById("resultContainer");
+    
+        // Check if the message already exists to prevent duplicates
+        const existingMessages = Array.from(container.children);
+        if (existingMessages.some(msg => msg.textContent === message)) return;
+    
+        // Remove old carbonation or dispense pressure results before adding new ones
+        if (message.includes("Calculated Carbonation Pressure")) {
+            existingMessages.forEach(msg => {
+                if (msg.textContent.includes("Calculated Carbonation Pressure")) {
+                    msg.remove();
+                }
+            });
+        }
+        if (message.includes("Calculated Dispense Pressure")) {
+            existingMessages.forEach(msg => {
+                if (msg.textContent.includes("Calculated Dispense Pressure")) {
+                    msg.remove();
+                }
+            });
+        }
+    
+        // Create a wrapper div for better styling
+        const resultDiv = document.createElement("div");
+        resultDiv.className = `result-card alert ${success ? "alert-success" : "alert-danger"}`;
+    
+        // Extract the numeric value from the message
+        const [header, value] = message.split(":");
+    
+        // Create a title element for better readability
+        const resultTitle = document.createElement("h4");
+        resultTitle.textContent = `${header}:`;
+        resultTitle.className = "result-title";
+    
+        // Create a value element with bold styling
+        const resultValue = document.createElement("p");
+        resultValue.textContent = value.trim();
+        resultValue.className = "result-value";
+    
+        // Append elements to result card
+        resultDiv.appendChild(resultTitle);
+        resultDiv.appendChild(resultValue);
+        container.appendChild(resultDiv);
     }
-
-    // Create new result div and add to container
-    const resultDiv = document.createElement("div");
-    resultDiv.className = `alert ${success ? "alert-success" : "alert-danger"}`;
-    resultDiv.textContent = message;
-    container.appendChild(resultDiv);
-}
 
     // Clear the result display
     function clearResult(containerId) {
