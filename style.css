@@ -181,20 +181,27 @@ hr {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Larger & Bold Result Title */
+/* Ensure Bootstrap does NOT override result styling */
 h4.result-title {
-    font-family: 'Inter', sans-serif;
-    font-weight: 900;
-    font-size: 1.5rem; /* Bigger for emphasis */
-    color: #333;
-    margin-bottom: 0.5rem;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 900 !important;
+    font-size: 2rem !important;  /* Make title bigger */
+    color: #333 !important;
+    margin-bottom: 0.5rem !important;
 }
 
-/* Large & Readable Result Value (not bold) */
+/* Ensure result value is large but not bold */
 p.result-value {
-    font-size: 2.75rem;  /* Bigger for easy readability */
-    font-weight: 400;  /* Normal weight, not bold */
-    color: #222;
+    font-size: 3.5rem !important;  /* Make result very readable */
+    font-weight: 400 !important;  /* Keep normal weight */
+    color: #222 !important;
+    margin: 0 !important;
+    text-align: center !important;
+}
+
+/* Override Bootstrap’s default styles for h4 and p */
+h4, p {
+    all: unset !important; /* Removes Bootstrap’s default styles */
 }
 
 /* Force 60% width for number input, 40% for unit dropdown */
