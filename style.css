@@ -185,14 +185,13 @@ hr {
 h4.result-title {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important;
-    font-size: 2rem !important;  /* Make title bigger */
+    font-size: 1.2rem !important;
     color: #333 !important;
-    margin-bottom: 0.5rem !important;
 }
 
 /* Ensure result value is large but not bold */
 p.result-value {
-    font-size: 3.5rem !important;  /* Make result very readable */
+    font-size: 3rem !important;  /* Make result very readable */
     font-weight: 400 !important;  /* Keep normal weight */
     color: #222 !important;
     margin: 0 !important;
