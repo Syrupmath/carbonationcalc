@@ -181,12 +181,13 @@ hr {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Ensure Bootstrap does NOT override result styling */
+/* Make result title (h4) match h2 styling */
 h4.result-title {
     font-family: 'Inter', sans-serif !important;
-    font-weight: 900 !important;
-    font-size: 1.2rem !important;
-    color: #333 !important;
+    font-weight: 900 !important; /* Keep it bold */
+    font-size: 1.2rem !important; /* Match h2 size */
+    color: #333 !important; /* Match h2 color */
+    margin-bottom: 0.5rem !important;
 }
 
 /* Ensure result value is large but not bold */
