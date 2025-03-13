@@ -192,11 +192,12 @@ h4.result-title {
 
 /* Ensure result value is large but not bold */
 p.result-value {
-    font-size: 3rem !important;  /* Make result very readable */
-    font-weight: 400 !important;  /* Keep normal weight */
+    font-size: 3rem !important;  /* Large size */
+    font-weight: 400 !important;   /* Normal weight */
     color: #222 !important;
     margin: 0 !important;
     text-align: center !important;
+    display: block !important;  /* Forces it onto a new line */
 }
 
 /* Override Bootstrap’s default styles for h4 and p */
