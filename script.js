@@ -196,13 +196,14 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
     const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
 
-    // **Clear previous dispense pressure result before recalculating**
+    // ✅ Remove previous dispense pressure result before recalculating
     removePreviousResult("Calculated Dispense Pressure");
 
-    // Calculate dispensing pressure
+    // ✅ Calculate dispensing pressure
     const dispensePressurePSI = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
     const dispensePressureBAR = dispensePressurePSI * 0.0689476;
 
+    // ✅ Display new result (ensuring old one is gone)
     displayResult(
         `Calculated Dispense Pressure: ${dispensePressurePSI.toFixed(1)} PSI / ${dispensePressureBAR.toFixed(1)} BAR`,
         true
@@ -217,63 +218,51 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     }
 
     // Display result messages
-    function displayResult(message, success) {
-        const container = document.getElementById("resultContainer");
-    
-        // Check if the message already exists to prevent duplicates
-        const existingMessages = Array.from(container.children);
-        if (existingMessages.some(msg => msg.textContent === message)) return;
-    
-        // Remove old carbonation or dispense pressure results before adding new ones
-        if (message.includes("Calculated Carbonation Pressure")) {
-            existingMessages.forEach(msg => {
-                if (msg.textContent.includes("Calculated Carbonation Pressure")) {
-                    msg.remove();
-                }
-            });
+function displayResult(message, success) {
+    const container = document.getElementById("resultContainer");
+
+    // ✅ Remove previous result if it exists
+    const existingMessages = Array.from(container.children);
+    existingMessages.forEach(msg => {
+        if (msg.textContent.includes(message.split(":")[0])) { // Remove old result with the same header
+            msg.remove();
         }
-        if (message.includes("Calculated Dispense Pressure")) {
-            existingMessages.forEach(msg => {
-                if (msg.textContent.includes("Calculated Dispense Pressure")) {
-                    msg.remove();
-                }
-            });
-        }
-    
-        // Create a wrapper div for better styling
-        const resultDiv = document.createElement("div");
-        resultDiv.className = `result-card alert ${success ? "alert-success" : "alert-danger"}`;
-    
-        // Extract the numeric value from the message
-        const [header, value] = message.split(":");
-    
-        // Create a title element for better readability
-        const resultTitle = document.createElement("h4");
-        resultTitle.textContent = `${header}:`;
-        resultTitle.className = "result-title";
-    
-        // Create a value element with bold styling
-        const resultValue = document.createElement("p");
-        resultValue.textContent = value.trim();
-        resultValue.className = "result-value";
-    
-        // Append elements to result card
-        resultDiv.appendChild(resultTitle);
-        resultDiv.appendChild(resultValue);
-        container.appendChild(resultDiv);
-    }
+    });
+
+    // ✅ Create a new result display
+    const resultDiv = document.createElement("div");
+    resultDiv.className = `result-card alert ${success ? "alert-success" : "alert-danger"}`;
+
+    // Extract the numeric value from the message
+    const [header, value] = message.split(":");
+
+    // Create a title element for better readability
+    const resultTitle = document.createElement("h4");
+    resultTitle.textContent = `${header}:`;
+    resultTitle.className = "result-title";
+
+    // Create a value element with bold styling
+    const resultValue = document.createElement("p");
+    resultValue.textContent = value.trim();
+    resultValue.className = "result-value";
+
+    // Append elements to result card
+    resultDiv.appendChild(resultTitle);
+    resultDiv.appendChild(resultValue);
+    container.appendChild(resultDiv);
+}
 
     // Clear the result display
     function clearResult(containerId) {
         document.getElementById(containerId).innerHTML = "";
     }
 
-    function removePreviousResult(keyword) {
+function removePreviousResult(keyword) {
     const container = document.getElementById("resultContainer");
     const existingMessages = Array.from(container.children);
 
     existingMessages.forEach(msg => {
-        if (msg.textContent.includes(keyword)) {
+        if (msg.querySelector(".result-title") && msg.querySelector(".result-title").textContent.includes(keyword)) {
             msg.remove();
         }
     });
