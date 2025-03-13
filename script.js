@@ -262,7 +262,7 @@ function removePreviousResult(keyword) {
     const existingMessages = Array.from(container.children);
 
     existingMessages.forEach(msg => {
-        if (msg.querySelector(".result-title") && msg.querySelector(".result-title").textContent.includes(keyword)) {
+        if (msg.querySelector(".result-title")?.textContent.includes(keyword)) {
             msg.remove();
         }
     });
