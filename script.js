@@ -221,32 +221,31 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
 function displayResult(message, success) {
     const container = document.getElementById("resultContainer");
 
-    // ✅ Remove previous result if it exists
+    // ✅ Remove previous result with the same title
     const existingMessages = Array.from(container.children);
+    const [header, value] = message.split(":");
+    
     existingMessages.forEach(msg => {
-        if (msg.textContent.includes(message.split(":")[0])) { // Remove old result with the same header
+        if (msg.querySelector(".result-title")?.textContent.includes(header)) { 
             msg.remove();
         }
     });
 
-    // ✅ Create a new result display
+    // ✅ Create new result display
     const resultDiv = document.createElement("div");
     resultDiv.className = `result-card alert ${success ? "alert-success" : "alert-danger"}`;
 
-    // Extract the numeric value from the message
-    const [header, value] = message.split(":");
-
-    // Create a title element for better readability
+    // Create header element
     const resultTitle = document.createElement("h4");
     resultTitle.textContent = `${header}:`;
     resultTitle.className = "result-title";
 
-    // Create a value element with bold styling
+    // Create value element
     const resultValue = document.createElement("p");
     resultValue.textContent = value.trim();
     resultValue.className = "result-value";
 
-    // Append elements to result card
+    // Append elements to the result card
     resultDiv.appendChild(resultTitle);
     resultDiv.appendChild(resultValue);
     container.appendChild(resultDiv);
@@ -262,7 +261,7 @@ function removePreviousResult(keyword) {
     const existingMessages = Array.from(container.children);
 
     existingMessages.forEach(msg => {
-        if (msg.querySelector(".result-title")?.textContent.includes(keyword)) {
+        if (msg.textContent.includes(keyword)) {  // Match entire result block
             msg.remove();
         }
     });
