@@ -196,6 +196,9 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
     const riseInFeet = lineRiseUnit === "m" ? lineRise / 0.3048 : lineRise;
 
+    // **Clear previous dispense pressure result before recalculating**
+    removePreviousResult("Calculated Dispense Pressure");
+
     // Calculate dispensing pressure
     const dispensePressurePSI = carbonationPressurePSI + (resistance * runInFeet) + (riseInFeet / 2) + 1;
     const dispensePressureBAR = dispensePressurePSI * 0.0689476;
@@ -264,6 +267,17 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     function clearResult(containerId) {
         document.getElementById(containerId).innerHTML = "";
     }
+
+    function removePreviousResult(keyword) {
+    const container = document.getElementById("resultContainer");
+    const existingMessages = Array.from(container.children);
+
+    existingMessages.forEach(msg => {
+        if (msg.textContent.includes(keyword)) {
+            msg.remove();
+        }
+    });
+}
 
     // Bootstrap error visibility functions
     function showError(elementId) {
