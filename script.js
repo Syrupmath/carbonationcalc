@@ -218,28 +218,45 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     // Display result messages
 function displayResult(message, success) {
     const container = document.getElementById("resultContainer");
+    
+    // Identify if the message is Carbonation or Dispense Pressure
+    const isCarbonation = message.includes("Calculated Carbonation Pressure");
+    const isDispense = message.includes("Calculated Dispense Pressure");
 
-    // Remove all previous results
-    container.innerHTML = "";
+    // Remove previous Dispense Pressure result (if it exists)
+    if (isDispense) {
+        const existingDispense = container.querySelector(".dispense-result");
+        if (existingDispense) existingDispense.remove();
+    }
 
-    // Create a wrapper div for better styling
+    // Remove previous Carbonation Pressure result (if it's being updated)
+    if (isCarbonation) {
+        const existingCarbonation = container.querySelector(".carbonation-result");
+        if (existingCarbonation) existingCarbonation.remove();
+    }
+
+    // Create result card
     const resultDiv = document.createElement("div");
     resultDiv.className = `result-card alert ${success ? "alert-success" : "alert-danger"}`;
+    
+    // Tag the result type for easy removal later
+    if (isCarbonation) resultDiv.classList.add("carbonation-result");
+    if (isDispense) resultDiv.classList.add("dispense-result");
 
     // Extract the numeric value from the message
     const [header, value] = message.split(":");
 
-    // Create a title element for better readability
+    // Create title element
     const resultTitle = document.createElement("h4");
     resultTitle.textContent = `${header}:`;
     resultTitle.className = "result-title";
 
-    // Create a value element with bold styling
+    // Create value element
     const resultValue = document.createElement("p");
     resultValue.textContent = value.trim();
     resultValue.className = "result-value";
 
-    // Append elements to result card
+    // Append elements to the result card
     resultDiv.appendChild(resultTitle);
     resultDiv.appendChild(resultValue);
     container.appendChild(resultDiv);
