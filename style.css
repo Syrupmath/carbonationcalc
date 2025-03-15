@@ -80,6 +80,11 @@ p {
     margin-bottom: 1rem;
 }
 
+/* Add space below step instruction paragraphs */
+h2.h4 + p {
+    margin-bottom: 1rem; /* Adjust spacing as needed */
+}
+
 
 h2 {
     font-family: 'Inter', sans-serif !important;
