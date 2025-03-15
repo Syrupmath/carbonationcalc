@@ -48,6 +48,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="CarbCalc" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="manifest.json">
 </head>
 <body class="bg-light">
 
@@ -191,5 +192,12 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    <script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js")
+            .then(() => console.log("Service Worker Registered"))
+            .catch((error) => console.log("Service Worker Registration Failed:", error));
+    }
+</script>
 </body>
 </html>
