@@ -93,28 +93,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Perform the carbonation and dispensing pressure calculations
-    function performCalculations() {
-        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
-        const targetCarbonation = carbonationSelection.value === "custom"
-            ? parseFloat(document.getElementById("customValue").value)
-            : parseFloat(carbonationSelection.value);
+function performCalculations() {
+    const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
+    const targetCarbonation = carbonationSelection.value === "custom"
+        ? parseFloat(document.getElementById("customValue").value)
+        : parseFloat(carbonationSelection.value);
 
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const convertedTemperature = temperatureUnit === "F"
-            ? (temperatureInput - 32) * (5 / 9)
-            : temperatureInput;
+    const temperatureInput = parseFloat(document.getElementById("temperature").value);
+    const temperatureUnit = document.getElementById("temperatureUnit").value;
+    const convertedTemperature = temperatureUnit === "F"
+        ? (temperatureInput - 32) * (5 / 9)
+        : temperatureInput;
 
-        calculateCarbonationPressure(convertedTemperature, targetCarbonation);
+    calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
-        if (step3HasInput()) {
-            const lineType = document.getElementById("lineType").value;
-            const lineRun = parseFloat(document.getElementById("lineRun").value);
-            const lineRise = parseFloat(document.getElementById("lineRise").value);
-
-            calculateDispensingPressure(lineType, lineRun, lineRise);
-        }
+    // Remove "Calculated Dispense Pressure" if Step 3 is empty
+    if (!step3HasInput()) {
+        const existingDispense = document.querySelector(".dispense-result");
+        if (existingDispense) existingDispense.remove();
+        return; // Stop here if there's no Step 3 input
     }
+
+    // Otherwise, calculate and display the dispense pressure
+    const lineType = document.getElementById("lineType").value;
+    const lineRun = parseFloat(document.getElementById("lineRun").value);
+    const lineRise = parseFloat(document.getElementById("lineRise").value);
+
+    calculateDispensingPressure(lineType, lineRun, lineRise);
+}
 
     // Calculate carbonation pressure based on temperature and CO2 level
     function calculateCarbonationPressure(temperature, carbonationLevel) {
