@@ -76,6 +76,11 @@ li, p {
     color: #333;                    /* Slightly softer than pure black */
 }
 
+/* Add space after instruction paragraphs in form steps */
+.form-step p {
+    margin-bottom: 0.75rem !important;
+}
+
 h2 {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important;
