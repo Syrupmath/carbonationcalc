@@ -77,12 +77,7 @@ li, p {
 }
 
 p {
-    padding-bottom: 1rem;
-}
-
-/* Add spacing after each step's instruction paragraph */
-.form-section p {
-    margin-bottom: 1rem !important; /* Ensures spacing between text and form inputs */
+    margin-bottom: 2rem !important;
 }
 
 h2 {
