@@ -201,7 +201,7 @@ p.result-value {
 }
 
 /* Override Bootstrap’s default styles for h4 and p */
-h4, p {
+h4 {
     all: unset !important; /* Removes Bootstrap’s default styles */
 }
 
