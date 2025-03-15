@@ -210,12 +210,3 @@ h4, p {
     flex: 0 0 40% !important; 
     max-width: 40% !important;
 }
-
-/* Ensure spacing after instruction paragraphs before inputs */
-.form-section p {
-    display: block !important; /* Ensures it behaves like a paragraph */
-    margin-bottom: 1rem !important; /* Adds spacing before inputs */
-    font-size: 0.8rem !important; /* Keeps your intended size */
-    line-height: 1.5 !important; /* Ensures good readability */
-    color: #333 !important; /* Keeps color consistent */
-}
