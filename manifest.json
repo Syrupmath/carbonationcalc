@@ -1,0 +1,20 @@
+{
+    "name": "Carbonation Calculator",
+    "short_name": "CarbCalc",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#f8f9fa",
+    "theme_color": "#007bff",
+    "icons": [
+        {
+            "src": "favicon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ]
+}
