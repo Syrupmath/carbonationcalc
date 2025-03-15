@@ -218,18 +218,16 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
     // Display result messages
 function displayResult(message, success) {
     const container = document.getElementById("resultContainer");
-    
-    // Identify if the message is Carbonation or Dispense Pressure
+
+    // Identify result type
     const isCarbonation = message.includes("Calculated Carbonation Pressure");
     const isDispense = message.includes("Calculated Dispense Pressure");
 
-    // Remove previous Dispense Pressure result (if it exists)
+    // Remove previous results of the same type
     if (isDispense) {
         const existingDispense = container.querySelector(".dispense-result");
         if (existingDispense) existingDispense.remove();
     }
-
-    // Remove previous Carbonation Pressure result (if it's being updated)
     if (isCarbonation) {
         const existingCarbonation = container.querySelector(".carbonation-result");
         if (existingCarbonation) existingCarbonation.remove();
@@ -238,28 +236,33 @@ function displayResult(message, success) {
     // Create result card
     const resultDiv = document.createElement("div");
     resultDiv.className = `result-card alert ${success ? "alert-success" : "alert-danger"}`;
-    
-    // Tag the result type for easy removal later
+
+    // Tag result for ordering
     if (isCarbonation) resultDiv.classList.add("carbonation-result");
     if (isDispense) resultDiv.classList.add("dispense-result");
 
-    // Extract the numeric value from the message
+    // Extract header and value
     const [header, value] = message.split(":");
 
-    // Create title element
+    // Create title and value elements
     const resultTitle = document.createElement("h4");
     resultTitle.textContent = `${header}:`;
     resultTitle.className = "result-title";
 
-    // Create value element
     const resultValue = document.createElement("p");
     resultValue.textContent = value.trim();
     resultValue.className = "result-value";
 
-    // Append elements to the result card
+    // Append elements
     resultDiv.appendChild(resultTitle);
     resultDiv.appendChild(resultValue);
-    container.appendChild(resultDiv);
+
+    // Ensure correct order: Dispense Pressure first, Carbonation Pressure second
+    if (isDispense) {
+        container.prepend(resultDiv);
+    } else if (isCarbonation) {
+        container.appendChild(resultDiv);
+    }
 }
 
     // Clear the result display
