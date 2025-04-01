@@ -192,7 +192,7 @@ h4.result-title {
 
 /* Ensure result value is large but not bold */
 p.result-value {
-    font-size: 2.5rem !important;  /* Large size */
+    font-size: 2rem !important;  /* Large size */
     font-weight: 400 !important;   /* Normal weight */
     color: #222 !important;
     margin: 0 !important;
