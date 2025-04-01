@@ -185,7 +185,7 @@ hr {
 h4.result-title {
     font-family: 'Inter', sans-serif !important;
     font-weight: 900 !important; /* Keep it bold */
-    font-size: 1.2rem !important; /* Match h2 size */
+    font-size: 1.1rem !important; /* Match h2 size */
     color: #333 !important; /* Match h2 color */
     margin-bottom: 0.5rem !important;
 }
