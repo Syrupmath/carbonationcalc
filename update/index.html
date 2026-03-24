@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Essential Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO Meta Tags -->
+    <title>Carbonation & Dispense Pressure Calculator | CO2 Pressure Guide</title>
+    <meta name="description" content="Accurately calculate carbonation pressure and dispense pressure for your kegged beverages with our easy-to-use CO2 pressure calculator.">
+    <meta name="keywords" content="carbonation calculator, dispense pressure, CO2 pressure, keg carbonation, draft beer, beverage carbonation">
+    <meta name="author" content="Your Name or Brand">
+    
+    <!-- Open Graph Meta Tags (For Social Media Sharing) -->
+    <meta property="og:title" content="Carbonation & Dispense Pressure Calculator">
+    <meta property="og:description" content="Use this CO2 pressure calculator to determine the perfect carbonation and dispense pressure for your beverages.">
+    <meta property="og:image" content="https://carbonationcalc/preview-image.jpg">
+    <meta property="og:url" content="https://carbonationcalc.com">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card (For Twitter Sharing) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Carbonation & Dispense Pressure Calculator">
+    <meta name="twitter:description" content="Easily calculate CO2 pressure for perfect carbonation and dispensing.">
+    <meta name="twitter:image" content="https://carbonationcalc.com/preview-image.jpg">
+
+    <!-- Favicon (Replace with your actual favicon link) -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <!-- Canonical URL (Avoids duplicate content issues) -->
+    <link rel="canonical" href="https://carbonationcalc.com">
+
+    <!-- Robots Meta Tag (Ensures indexing) -->
+    <meta name="robots" content="index, follow">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonation and Dispense Pressure Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Favicon Info -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="CarbCalc" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="bg-light">
+
+    <div class="container py-2">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <!-- Unified Form Starts Here -->
+                <header>
+                <p>The</p>
+                <h1>Carbonation and Dispense Pressure Calculator</h1>
+                <p id="author">by <a href="https://www.crossroads.bar/" target="_blank" aria-label="Link to website, opens in a new window">Crossroads Consulting</a> and 
+                    <a href="https://jeffreymorgenthaler.com/book/" target="_blank" aria-label="Link to website, opens in a new window">Jeffrey Morgenthaler</a>
+                </p>
+                <p>This simple tool calculates the pressure needed to carbonate beverages such as cocktails, sodas, or water to your desired style. It can also be used to calculate dispense pressure for kegged beverages served on draft.</p>
+                </header>
+                <hr />
+                <h2>Before You Begin: Important Information</h2>
+                <p>
+                    To get started, you will need a 
+                    CO<sub>2</sub> tank with a 
+                    <a href="https://amzn.to/4iBWAiL" rel="noopener noreferrer" target="_blank">regulator</a>, 
+                    as well as 
+                    <a href="https://amzn.to/41HPTov" rel="noopener noreferrer" target="_blank">hoses with ball lock quick disconnects</a>. 
+                    You will also need either a 
+                    <a href="https://amzn.to/4hlIqkK" rel="noopener noreferrer" target="_blank">keg with ball lock posts</a> 
+                    or a PET bottle fitted with a 
+                    <a href="https://amzn.to/4bEU9d0" rel="noopener noreferrer" target="_blank">carbonation cap</a>.
+                </p>                
+                <div id="safety">
+                <h3>Safety Notes:</h3>
+                <ul>
+                    <li><strong>Always use a regulator</strong> – <em>No exceptions</em>.</li>
+                    <li><strong>Gas leaks are dangerous</strong> – <em>If you hear a hiss, check it immediately</em>.</li>
+                    <li><strong>Fit your equipment properly</strong> – <em>If you're unsure, ask</em>.</li>
+                    <li><strong>Know how to use it</strong> – <em><a href="https://shop.crossroads.bar/products/bubbles-a-guide-to-carbonated-cocktails" target="_blank" aria-label="Link to website, opens in a new window">Read the book</a>, <a href="https://youtu.be/W6eGae1ewZU?si=lRAzkN-BmJmtr5fn" target="_blank" aria-label="Link to website, opens in a new window">watch a tutorial</a>, or ask an expert</em>.</li>
+                    <li><strong>Keep everything squeaky clean</strong> – <em>Contamination is the enemy</em>.</li>
+                    <li><strong>Roll kegs, don’t lift them</strong> – <em>Your back will thank you.</em></li>
+                </ul>
+                </div>
+<hr />
+                <form id="carbonationForm">
+                    <!-- Step 1: Select Carbonation Level -->
+                    <div class="mb-4">
+                        <h2 class="h4">Step 1: Select Carbonation Level</h2>
+                           <div class="form-step"><p>Choose the general level of carbonation you'd like in your finished beverage from the list of sample styles below. Alternatively, you can enter your own custom level for more precision. Note: these values are intended as guidelines and depend on a number of other factors detailed in the <strong>Bubbles</strong> book.</p></div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="carbonation" value="5" id="americanLager">
+                            <label class="form-check-label" for="americanLager">American Lager</label>
+                            <small class="d-block text-muted">Light and refreshing with a gentle fizz - around 5 g/L CO₂</small>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="carbonation" value="6" id="italianWater">
+                            <label class="form-check-label" for="italianWater">Italian Sparkling Water</label>
+                            <small class="d-block text-muted">Crisp and effervescent - around 6 g/L CO₂</small>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="carbonation" value="7" id="cola">
+                            <label class="form-check-label" for="cola">Bottled Cola</label>
+                            <small class="d-block text-muted">Bold and bubbly, with a satisfying fizz - around 7 g/L CO₂</small>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="carbonation" value="8" id="tonicWater">
+                            <label class="form-check-label" for="tonicWater">Tonic Water</label>
+                            <small class="d-block text-muted">Sharp and zesty, with a sparkling kick - around 8 g/L CO₂</small>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="carbonation" value="9" id="champagne">
+                            <label class="form-check-label" for="champagne">French Champagne</label>
+                            <small class="d-block text-muted">Bursting with bubbles, elegant and celebratory - around 9 g/L CO₂</small>
+                        </div>
+
+                        <div class="input-group mt-2">
+                            <span class="input-group-text">
+                                <input class="form-check-input mt-0" type="radio" name="carbonation" value="custom" id="customRadio">
+                            </span>
+                            <input type="number" id="customValue" class="form-control" placeholder="Enter custom g/L">
+                        </div>
+
+                        <!-- ERROR MESSAGE: Carbonation -->
+                        <small id="carbonationError" class="text-danger d-none">Please select a carbonation level.</small>
+                    </div>
+<hr />
+                    <!-- Step 2: Enter Temperature -->
+                    <div class="mb-4">
+                        <h2 class="h4">Step 2: Enter the Temperature of Your Liquid</h2>
+                        <div class="form-step"><p>Carbon dioxide is more soluble in colder liquids. Chill your beverage thoroughly (overnight in the refrigerator works great) and enter the temperature here. The ideal temperature range for carbonating is between 0°C (32°F) and 5°C (41°F).</p></div>
+                        <div class="input-group">
+                            <input type="number" id="temperature" class="form-control" placeholder="Enter temperature">
+                            <select id="temperatureUnit" class="form-select">
+                                <option value="C">Celsius</option>
+                                <option value="F">Fahrenheit</option>
+                            </select>
+                        </div>
+                        <small id="temperatureError" class="text-danger d-none">Please enter a valid temperature between 0°C and 30°C.</small>
+                    </div>
+<hr />
+                    <!-- Step 3: Calculate Dispensing Pressure (Optional) -->
+                    <div class="mb-4">
+                        <h2 class="h4">Step 3: Calculate Dispensing Pressure (Optional)</h2>
+                        <div class="form-step"><p>If you're serving your carbonated beverage on draft, you will need to know the total length of your draft line and its size and material composition, as well as the amount of rise or drop of your line. If this section is left empty, dispensing pressure will not be calculated.</p></div>
+<!--                    <label for="lineType" class="form-label">Line Type:</label> -->
+                        <select id="lineType" class="form-select">
+                            <option value="">Select Line Type</option>
+                            <option value="3/16 Vinyl">3/16 Vinyl</option>
+                            <option value="1/4 Vinyl">1/4 Vinyl</option>
+                            <option value="5/16 Vinyl">5/16 Vinyl</option>
+                            <option value="3/8 Vinyl">3/8 Vinyl</option>
+                            <option value="1/2 Vinyl">1/2 Vinyl</option>
+                            <option value="3/16 Polyethylene">3/16 Polyethylene</option>
+                            <option value="1/4 Polyethylene">1/4 Polyethylene</option>
+                            <option value="3/8 Stainless Steel">3/8 Stainless Steel</option>
+                            <option value="5/16 Stainless Steel">5/16 Stainless Steel</option>
+                            <option value="1/4 Stainless Steel">1/4 Stainless Steel</option>
+                        </select>
+
+                        <div class="input-group mt-3">
+                            <input type="number" id="lineRun" class="form-control" placeholder="Enter total line length">
+                            <select id="lineRunUnit" class="form-select">
+                                <option value="m">Meters</option>
+                                <option value="ft">Feet</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group mt-3">
+                            <input type="number" id="lineRise" class="form-control" placeholder="Enter line rise/drop (+/-)">
+                            <select id="lineRiseUnit" class="form-select">
+                                <option value="m">Meters</option>
+                                <option value="ft">Feet</option>
+                            </select>
+                        </div>
+
+                        <small id="lineError" class="text-danger d-none">Please complete all fields for dispensing pressure.</small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="button" id="calculateButton" class="btn btn-primary btn-lg">Calculate</button>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="resultContainer" class="mt-4"></div>
+                </form>
+            </div>
+
+        <footer class="text-center mt-5 mb-4 small" style="color:#666;">
+        <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
+            <a property="dct:title" rel="cc:attributionURL" href="http://www.carbonationcalc.com/">The Carbonation and Dispense Pressure Calculator</a>
+            is licensed under 
+            <a href="https://creativecommons.org/licenses/by-nd/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">
+                CC BY-ND 4.0
+            </a>
+        </p>
+        </footer>
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js")
+            .then(() => console.log("Service Worker Registered"))
+            .catch((error) => console.log("Service Worker Registration Failed:", error));
+    }
+    </script>
+    <!-- 100% privacy-first analytics -->
+    <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+</body>
+</html>
