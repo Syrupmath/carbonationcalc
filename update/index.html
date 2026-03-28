@@ -15,7 +15,7 @@
     <!-- Open Graph Meta Tags (For Social Media Sharing) -->
     <meta property="og:title" content="Carbonation & Dispense Pressure Calculator">
     <meta property="og:description" content="Use this CO2 pressure calculator to determine the perfect carbonation and dispense pressure for your beverages.">
-    <meta property="og:image" content="https://carbonationcalc.com/preview-image.jpg">
+    <meta property="og:image" content="https://carbonationcalc/preview-image.jpg">
     <meta property="og:url" content="https://carbonationcalc.com">
     <meta property="og:type" content="website">
 
@@ -25,12 +25,19 @@
     <meta name="twitter:description" content="Easily calculate CO2 pressure for perfect carbonation and dispensing.">
     <meta name="twitter:image" content="https://carbonationcalc.com/preview-image.jpg">
 
+    <!-- Favicon (Replace with your actual favicon link) -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
     <!-- Canonical URL (Avoids duplicate content issues) -->
     <link rel="canonical" href="https://carbonationcalc.com">
 
     <!-- Robots Meta Tag (Ensures indexing) -->
     <meta name="robots" content="index, follow">
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonation and Dispense Pressure Calculator</title>
     <link rel="stylesheet" href="style.css">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,6 +47,7 @@
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="CarbCalc" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="bg-light">
@@ -145,7 +153,19 @@
                     <!-- Step 3: Calculate Dispensing Pressure (Optional) -->
                     <div class="mb-4">
                         <h2 class="h4">Step 3: Calculate Dispensing Pressure (Optional)</h2>
-                        <div class="form-step"><p>If you're serving your carbonated beverage on draft, you will need to know the total length of your draft line and its size and material composition, as well as the amount of rise or drop of your line. If this section is left empty, dispensing pressure will not be calculated.</p></div>
+                        <div class="form-step">
+                            <p>If you're serving your carbonated beverage on draft, you will need to know the total length of your draft line and its size and material composition, as well as the amount of rise or drop of your line. If this section is left empty, dispensing pressure will not be calculated.</p>
+                            <p>If you know the pressure in your keg and only need to calculate the draft dispense pressure, enter the value in the field below. Please note: this will override any calculation done in Steps 1 &amp; 2.</p>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input type="number" id="overridePressure" class="form-control" placeholder="Enter known keg pressure (optional)">
+                            <select id="overridePressureUnit" class="form-select">
+                                <option value="PSI">PSI</option>
+                                <option value="BAR">BAR</option>
+                            </select>
+                        </div>
+
 <!--                    <label for="lineType" class="form-label">Line Type:</label> -->
                         <select id="lineType" class="form-select">
                             <option value="">Select Line Type</option>
