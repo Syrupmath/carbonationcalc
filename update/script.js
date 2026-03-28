@@ -134,8 +134,8 @@ function performCalculations() {
             return;
         }
 
-        const lowerPressureData = carbonationData[lowerTemp];
-        const upperPressureData = carbonationData[upperTemp];
+        const lowerPressureData = carbonationData[String(lowerTemp)];
+        const upperPressureData = carbonationData[String(upperTemp)];
 
         const lowerPressure = interpolateCarbonationLevel(lowerPressureData, carbonationLevel);
         const upperPressure = interpolateCarbonationLevel(upperPressureData, carbonationLevel);
@@ -165,8 +165,8 @@ function performCalculations() {
 
         if (lowerLevel === undefined || upperLevel === undefined) return null;
 
-        const lowerPressure = pressureData[lowerLevel];
-        const upperPressure = pressureData[upperLevel];
+        const lowerPressure = pressureData[String(lowerLevel)];
+        const upperPressure = pressureData[String(upperLevel)];
 
         return lowerLevel === upperLevel
             ? lowerPressure
