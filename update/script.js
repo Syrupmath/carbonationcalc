@@ -120,7 +120,13 @@ function performCalculations() {
     const lineRun = parseFloat(document.getElementById("lineRun").value);
     const lineRise = parseFloat(document.getElementById("lineRise").value);
 
-    calculateDispensingPressure(lineType, lineRun, lineRise);
+    const overrideRaw = parseFloat(document.getElementById("overridePressure").value);
+    const overrideUnit = document.getElementById("overridePressureUnit").value;
+    const overridePSI = !isNaN(overrideRaw)
+        ? (overrideUnit === "BAR" ? overrideRaw * 14.5038 : overrideRaw)
+        : null;
+
+    calculateDispensingPressure(lineType, lineRun, lineRise, overridePSI);
 }
 
     // Calculate carbonation pressure based on temperature and CO2 level
@@ -174,13 +180,17 @@ function performCalculations() {
     }
 
     // Calculate dispensing pressure based on line type, run, and rise
-function calculateDispensingPressure(lineType, lineRun, lineRise) {
-    if (lastCarbonationPressurePSI === null) {
+function calculateDispensingPressure(lineType, lineRun, lineRise, overridePSI) {
+    let carbonationPressurePSI;
+
+    if (overridePSI !== null) {
+        carbonationPressurePSI = overridePSI;
+    } else if (lastCarbonationPressurePSI !== null) {
+        carbonationPressurePSI = lastCarbonationPressurePSI;
+    } else {
         displayResult("Dispensing pressure cannot be calculated without carbonation pressure.", false);
         return;
     }
-
-    const carbonationPressurePSI = lastCarbonationPressurePSI;
 
     // Line resistances (in PSI per foot)
     const lineResistances = {
@@ -217,7 +227,8 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
 
     // Check if Step 3 has input for dispensing pressure calculation
     function step3HasInput() {
-        return !!(document.getElementById("lineType").value ||
+        return !!(document.getElementById("overridePressure").value ||
+               document.getElementById("lineType").value ||
                document.getElementById("lineRun").value ||
                document.getElementById("lineRise").value);
     }
