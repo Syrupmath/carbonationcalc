@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
     let carbonationData;
+    let lastCarbonationPressurePSI = null;
 
     // Load carbonation data from JSON
     async function loadCarbonationData() {
@@ -125,7 +126,7 @@ function performCalculations() {
     // Calculate carbonation pressure based on temperature and CO2 level
     function calculateCarbonationPressure(temperature, carbonationLevel) {
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
-        let lowerTemp = temperatures.find((t) => t <= temperature);
+        let lowerTemp = temperatures.findLast((t) => t <= temperature);
         let upperTemp = temperatures.find((t) => t >= temperature);
 
         if (lowerTemp === undefined || upperTemp === undefined) {
@@ -144,8 +145,11 @@ function performCalculations() {
             return;
         }
 
-        const interpolatedPressure = lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
+        const interpolatedPressure = lowerTemp === upperTemp
+            ? lowerPressure
+            : lowerPressure + ((temperature - lowerTemp) / (upperTemp - lowerTemp)) * (upperPressure - lowerPressure);
         const pressurePSI = interpolatedPressure * 14.5038;
+        lastCarbonationPressurePSI = pressurePSI;
 
         displayResult(
             `Calculated Carbonation Pressure: ${pressurePSI.toFixed(1)} PSI / ${interpolatedPressure.toFixed(1)} BAR`,
@@ -156,7 +160,7 @@ function performCalculations() {
     // Interpolate carbonation level based on given pressure data
     function interpolateCarbonationLevel(pressureData, targetLevel) {
         const levels = Object.keys(pressureData).map(Number).sort((a, b) => a - b);
-        let lowerLevel = levels.find((l) => l <= targetLevel);
+        let lowerLevel = levels.findLast((l) => l <= targetLevel);
         let upperLevel = levels.find((l) => l >= targetLevel);
 
         if (lowerLevel === undefined || upperLevel === undefined) return null;
@@ -171,15 +175,12 @@ function performCalculations() {
 
     // Calculate dispensing pressure based on line type, run, and rise
 function calculateDispensingPressure(lineType, lineRun, lineRise) {
-    const carbonationResult = document.getElementById("resultContainer").textContent.match(/([\d.]+) PSI/);
-
-    if (!carbonationResult) {
+    if (lastCarbonationPressurePSI === null) {
         displayResult("Dispensing pressure cannot be calculated without carbonation pressure.", false);
         return;
     }
 
-    // Ensure we get the correct base carbonation pressure each time
-    const carbonationPressurePSI = parseFloat(carbonationResult[1]);
+    const carbonationPressurePSI = lastCarbonationPressurePSI;
 
     // Line resistances (in PSI per foot)
     const lineResistances = {
@@ -216,9 +217,9 @@ function calculateDispensingPressure(lineType, lineRun, lineRise) {
 
     // Check if Step 3 has input for dispensing pressure calculation
     function step3HasInput() {
-        return document.getElementById("lineType").value ||
+        return !!(document.getElementById("lineType").value ||
                document.getElementById("lineRun").value ||
-               document.getElementById("lineRise").value;
+               document.getElementById("lineRise").value);
     }
 
     // Display result messages
