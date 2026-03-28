@@ -40,45 +40,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     function validateForm() {
         let valid = true;
 
-        const overrideRaw = parseFloat(document.getElementById("overridePressure").value);
-        const usingOverride = !isNaN(overrideRaw);
-
-        // Step 1: Validate Carbonation Level (skip if override is entered)
+        // Step 1: Validate Carbonation Level
         const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
-        if (!usingOverride) {
-            if (!carbonationSelection) {
-                showError("carbonationError");
-                valid = false;
-            } else {
-                hideError("carbonationError");
-            }
-
-            const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom"
-                ? parseFloat(document.getElementById("customValue").value)
-                : parseFloat(carbonationSelection?.value);
-
-            if (carbonationSelection?.value === "custom" && isNaN(targetCarbonation)) {
-                showError("carbonationError");
-                valid = false;
-            }
+        if (!carbonationSelection) {
+            showError("carbonationError");
+            valid = false;
         } else {
             hideError("carbonationError");
         }
 
-        // Step 2: Validate Temperature (skip if override is entered)
-        if (!usingOverride) {
-            const temperatureInput = parseFloat(document.getElementById("temperature").value);
-            const temperatureUnit = document.getElementById("temperatureUnit").value;
-            const convertedTemperature = temperatureUnit === "F"
-                ? (temperatureInput - 32) * (5 / 9)
-                : temperatureInput;
+        const targetCarbonation = carbonationSelection && carbonationSelection.value === "custom"
+            ? parseFloat(document.getElementById("customValue").value)
+            : parseFloat(carbonationSelection?.value);
 
-            if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
-                showError("temperatureError");
+        if (carbonationSelection?.value === "custom") {
+            if (isNaN(targetCarbonation) || targetCarbonation < 3.5 || targetCarbonation > 16) {
+                document.getElementById("carbonationError").textContent = "Please enter a value between 3.5 and 16 g/L.";
+                showError("carbonationError");
                 valid = false;
-            } else {
-                hideError("temperatureError");
             }
+        }
+
+        // Step 2: Validate Temperature
+        const temperatureInput = parseFloat(document.getElementById("temperature").value);
+        const temperatureUnit = document.getElementById("temperatureUnit").value;
+        const convertedTemperature = temperatureUnit === "F"
+            ? (temperatureInput - 32) * (5 / 9)
+            : temperatureInput;
+
+        if (isNaN(convertedTemperature) || convertedTemperature < 0 || convertedTemperature > 30) {
+            showError("temperatureError");
+            valid = false;
         } else {
             hideError("temperatureError");
         }
@@ -106,46 +98,41 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Perform the carbonation and dispensing pressure calculations
 function performCalculations() {
-    const overrideRaw = parseFloat(document.getElementById("overridePressure").value);
-    const overrideUnit = document.getElementById("overridePressureUnit").value;
-    const overridePSI = !isNaN(overrideRaw)
-        ? (overrideUnit === "BAR" ? overrideRaw * 14.5038 : overrideRaw)
-        : null;
-    const usingOverride = overridePSI !== null;
+    const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
+    const targetCarbonation = carbonationSelection.value === "custom"
+        ? parseFloat(document.getElementById("customValue").value)
+        : parseFloat(carbonationSelection.value);
 
-    if (!usingOverride) {
-        const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
-        const targetCarbonation = carbonationSelection.value === "custom"
-            ? parseFloat(document.getElementById("customValue").value)
-            : parseFloat(carbonationSelection.value);
+    const temperatureInput = parseFloat(document.getElementById("temperature").value);
+    const temperatureUnit = document.getElementById("temperatureUnit").value;
+    const convertedTemperature = temperatureUnit === "F"
+        ? (temperatureInput - 32) * (5 / 9)
+        : temperatureInput;
 
-        const temperatureInput = parseFloat(document.getElementById("temperature").value);
-        const temperatureUnit = document.getElementById("temperatureUnit").value;
-        const convertedTemperature = temperatureUnit === "F"
-            ? (temperatureInput - 32) * (5 / 9)
-            : temperatureInput;
+    calculateCarbonationPressure(convertedTemperature, targetCarbonation);
 
-        calculateCarbonationPressure(convertedTemperature, targetCarbonation);
-    } else {
-        const existingCarbonation = document.querySelector(".carbonation-result");
-        if (existingCarbonation) existingCarbonation.remove();
-    }
-
+    // Remove "Calculated Dispense Pressure" if Step 3 is empty
     if (!step3HasInput()) {
         const existingDispense = document.querySelector(".dispense-result");
         if (existingDispense) existingDispense.remove();
-        return;
+        return; // Stop here if there's no Step 3 input
     }
 
+    // Otherwise, calculate and display the dispense pressure
     const lineType = document.getElementById("lineType").value;
     const lineRun = parseFloat(document.getElementById("lineRun").value);
     const lineRise = parseFloat(document.getElementById("lineRise").value);
 
-    calculateDispensingPressure(lineType, lineRun, lineRise, overridePSI);
+    calculateDispensingPressure(lineType, lineRun, lineRise);
 }
 
     // Calculate carbonation pressure based on temperature and CO2 level
     function calculateCarbonationPressure(temperature, carbonationLevel) {
+        if (carbonationLevel < 3.5) {
+            displayResult("Invalid carbonation level.", false);
+            return;
+        }
+
         const temperatures = Object.keys(carbonationData).map(Number).sort((a, b) => a - b);
         let lowerTemp = temperatures.findLast((t) => t <= temperature);
         let upperTemp = temperatures.find((t) => t >= temperature);
@@ -195,17 +182,13 @@ function performCalculations() {
     }
 
     // Calculate dispensing pressure based on line type, run, and rise
-function calculateDispensingPressure(lineType, lineRun, lineRise, overridePSI) {
-    let carbonationPressurePSI;
-
-    if (overridePSI !== null && overridePSI !== undefined) {
-        carbonationPressurePSI = overridePSI;
-    } else if (lastCarbonationPressurePSI !== null) {
-        carbonationPressurePSI = lastCarbonationPressurePSI;
-    } else {
+function calculateDispensingPressure(lineType, lineRun, lineRise) {
+    if (lastCarbonationPressurePSI === null) {
         displayResult("Dispensing pressure cannot be calculated without carbonation pressure.", false);
         return;
     }
+
+    const carbonationPressurePSI = lastCarbonationPressurePSI;
 
     // Line resistances (in PSI per foot)
     const lineResistances = {
@@ -242,8 +225,7 @@ function calculateDispensingPressure(lineType, lineRun, lineRise, overridePSI) {
 
     // Check if Step 3 has input for dispensing pressure calculation
     function step3HasInput() {
-        return !!(document.getElementById("overridePressure").value ||
-               document.getElementById("lineType").value ||
+        return !!(document.getElementById("lineType").value ||
                document.getElementById("lineRun").value ||
                document.getElementById("lineRise").value);
     }
