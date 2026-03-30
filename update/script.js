@@ -20,6 +20,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("customRadio").checked = true;
     });
 
+    // Clear stale results when override pressure is deleted and Steps 1 & 2 have no valid input
+    document.getElementById("overridePressure").addEventListener("input", () => {
+        const overrideRaw = parseFloat(document.getElementById("overridePressure").value);
+        const overrideEmpty = isNaN(overrideRaw);
+        const carbonationSelected = document.querySelector('input[name="carbonation"]:checked');
+        const temperatureEntered = document.getElementById("temperature").value.trim() !== "";
+
+        if (overrideEmpty && (!carbonationSelected || !temperatureEntered)) {
+            clearResult("resultContainer");
+            hideError("carbonationError");
+            hideError("temperatureError");
+        }
+    });
+
     // Calculate button handler
     document.getElementById("calculateButton").addEventListener("click", (event) => {
         event.preventDefault();
