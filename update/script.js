@@ -33,12 +33,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // When Step 1 or Step 2 gets input, clear the override field
+    // When Step 1 or Step 2 gets input, clear the override field and any Step 3 error
     document.querySelectorAll('input[name="carbonation"]').forEach(el => {
         el.addEventListener("change", () => {
             const overridePressure = document.getElementById("overridePressure");
             if (overridePressure.value.trim() !== "") {
                 overridePressure.value = "";
+                hideError("lineError");
                 clearResult("resultContainer");
             }
         });
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const overridePressure = document.getElementById("overridePressure");
             if (overridePressure.value.trim() !== "") {
                 overridePressure.value = "";
+                hideError("lineError");
                 clearResult("resultContainer");
             }
         });
