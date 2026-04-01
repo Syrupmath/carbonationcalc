@@ -134,17 +134,6 @@
 
                         <!-- ERROR MESSAGE: Carbonation -->
                         <small id="carbonationError" class="text-danger d-none">Please select a carbonation level.</small>
-
-                        <div class="override-box mt-3 p-3" style="background-color:#f0f0f0; border-radius:6px;">
-                            <p class="mb-2">If you know the pressure in your keg and only need to calculate the draft dispense pressure, enter the value below.</p>
-                            <div class="input-group">
-                                <input type="number" id="overridePressure" class="form-control" placeholder="Enter known keg pressure (optional)">
-                                <select id="overridePressureUnit" class="form-select">
-                                    <option value="PSI">PSI</option>
-                                    <option value="BAR">BAR</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
 <hr />
                     <!-- Step 2: Enter Temperature -->
@@ -159,6 +148,19 @@
                             </select>
                         </div>
                         <small id="temperatureError" class="text-danger d-none">Please enter a valid temperature between 0°C and 30°C.</small>
+
+                        <div class="override-box mt-3 p-3" style="background-color:#f0f0f0; border-radius:6px;">
+                            <h3 class="override-heading">Already Know Your Keg Pressure?</h3>
+                            <p class="mb-2">If you know the pressure in your keg and only need to calculate the draft dispense pressure, enter the value below.</p>
+                            <div class="input-group">
+                                <input type="number" id="overridePressure" class="form-control" placeholder="Enter known keg pressure (optional)">
+                                <select id="overridePressureUnit" class="form-select">
+                                    <option value="PSI">PSI</option>
+                                    <option value="BAR">BAR</option>
+                                </select>
+                            </div>
+                            <p class="mt-2 mb-0">If you enter a value here, any values entered in Steps 1 and 2 will be cleared.</p>
+                        </div>
                     </div>
 <hr />
                     <!-- Step 3: Calculate Dispensing Pressure (Optional) -->
