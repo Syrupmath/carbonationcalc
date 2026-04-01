@@ -1,4 +1,3 @@
-
 /* Import Google Fonts: League Spartan Black 900 for main header & Inter Black 900 for subheaders */
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@900&family=Inter:wght@900&display=swap');
 
@@ -203,6 +202,17 @@ p.result-value {
 /* Override Bootstrap’s default styles for h4 and p */
 h4 {
     all: unset !important; /* Removes Bootstrap’s default styles */
+}
+
+/* Override box in Step 1 */
+.override-box {
+    background-color: #f0f0f0;
+    border-radius: 6px;
+}
+
+.override-box p {
+    font-size: 0.8rem !important;
+    color: #555 !important;
 }
 
 /* Force 60% width for number input, 40% for unit dropdown */
