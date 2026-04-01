@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             hideError("temperatureError");
         }
 
-        // Step 3: Validate Dispensing Pressure (if any fields are filled)
+        // Step 3: Validate Dispensing Pressure (if any Step 3 fields are filled)
         if (step3HasInput()) {
             const lineType = document.getElementById("lineType").value;
             const lineRun = parseFloat(document.getElementById("lineRun").value);
@@ -151,7 +151,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const usingOverride = overridePSI !== null;
 
         if (!usingOverride) {
-            // Run Steps 1 & 2 calculation normally
             const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
             const targetCarbonation = carbonationSelection.value === "custom"
                 ? parseFloat(document.getElementById("customValue").value)
@@ -165,19 +164,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             calculateCarbonationPressure(convertedTemperature, targetCarbonation);
         } else {
-            // Override in use — clear any existing carbonation result
             const existingCarbonation = document.querySelector(".carbonation-result");
             if (existingCarbonation) existingCarbonation.remove();
         }
 
-        // Remove dispense result if Step 3 is empty
         if (!step3HasInput()) {
             const existingDispense = document.querySelector(".dispense-result");
             if (existingDispense) existingDispense.remove();
             return;
         }
 
-        // Calculate dispense pressure
         const lineType = document.getElementById("lineType").value;
         const lineRun = parseFloat(document.getElementById("lineRun").value);
         const lineRise = parseFloat(document.getElementById("lineRise").value);
@@ -253,7 +249,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // Line resistances (in PSI per foot)
         const lineResistances = {
             "3/16 Vinyl": 3,
             "1/4 Vinyl": 0.85,
@@ -269,7 +264,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const resistance = lineResistances[lineType] || 0;
 
-        // Convert meters to feet if necessary
         const lineRunUnit = document.getElementById("lineRunUnit").value;
         const lineRiseUnit = document.getElementById("lineRiseUnit").value;
         const runInFeet = lineRunUnit === "m" ? lineRun / 0.3048 : lineRun;
@@ -286,7 +280,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Check if Step 3 has any input
     function step3HasInput() {
-        return !!(document.getElementById("lineType").value ||
+        return !!(document.getElementById("overridePressure").value ||
+                  document.getElementById("lineType").value ||
                   document.getElementById("lineRun").value ||
                   document.getElementById("lineRise").value);
     }
@@ -341,7 +336,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById(containerId).innerHTML = "";
     }
 
-    // Bootstrap error visibility functions
     function showError(elementId) {
         document.getElementById(elementId).classList.remove("d-none");
     }
