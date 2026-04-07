@@ -75,7 +75,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         let valid = true;
 
         const overrideRaw = parseFloat(document.getElementById("overridePressure").value);
+        const overrideUnit = document.getElementById("overridePressureUnit").value;
         const usingOverride = !isNaN(overrideRaw);
+
+        // Validate override pressure range
+        if (usingOverride) {
+            const overrideMax = overrideUnit === "BAR" ? 5.2 : 75;
+            if (overrideRaw < 0 || overrideRaw > overrideMax) {
+                document.getElementById("overrideError").textContent =
+                    `Please enter a value between 0 and ${overrideUnit === "BAR" ? "5.2 BAR" : "75 PSI"}.`;
+                showError("overrideError");
+                valid = false;
+            } else {
+                hideError("overrideError");
+            }
+        } else {
+            hideError("overrideError");
+        }
 
         // Step 1: Validate Carbonation Level (skip if override is entered)
         const carbonationSelection = document.querySelector('input[name="carbonation"]:checked');
