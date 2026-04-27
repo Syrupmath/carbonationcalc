@@ -1,4 +1,4 @@
-const CACHE_NAME = "carbcalc-cache-v2";
+const CACHE_NAME = "carbcalc-cache-v3";
 const ASSETS_TO_CACHE = [
     "index.html",
     "style.css",
@@ -20,9 +20,19 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("fetch", (event) => {
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || fetch(event.request);
-        })
+        fetch(event.request)
+            .then((networkResponse) => {
+                // Update the cache with the fresh response
+                const responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
+                return networkResponse;
+            })
+            .catch(() => {
+                // Network failed — fall back to cache
+                return caches.match(event.request);
+            })
     );
 });
 
